@@ -85,10 +85,14 @@ def sentence(place, reviews, result):
     deep = d[-1]
     if result["base_share"] is not None and deep["n"] >= 10 and result["base_share"] - deep["share"] >= 0.15:
         parts.append(f"Its most seasoned reviewers, with 51 or more reviews, give it five stars {deep['share']:.0%} of the time.")
-    for w in result["bursts"].get("praise burst", []):
-        parts.append(f"{w['n']} five-stars landed between {w['start']:%-d %b} and {w['end']:%-d %b} when {w['expected']:g} would be normal.")
-    for w in result["bursts"].get("attack burst", []):
-        parts.append(f"{w['n']} one-stars landed between {w['start']:%-d %b} and {w['end']:%-d %b} when {w['expected']:g} would be normal.")
+    years = len({x.date.year for x in reviews}) > 1
+    for name, word in (("praise burst", "five"), ("attack burst", "one")):
+        ws = result["bursts"].get(name, [])
+        if ws:
+            when = lambda w: f"{w['n']} from {w['start']:%-d %b} to {w['end']:%-d %b}" + (f" {w['end']:%Y}" if years else "")
+            spans = ", ".join(when(w) for w in ws[:-1]) + (" and " if len(ws) > 1 else "") + when(ws[-1])
+            count = {1: "One week", 2: "Two weeks", 3: "Three weeks", 4: "Four weeks"}.get(len(ws), f"{len(ws)} weeks")
+            parts.append(f"{count} carried far more {word}-stars than usual: {spans}, against {ws[0]['expected']:g} in a normal week.")
     if result["echoes"]:
         n = sum(len(c) for c in result["echoes"])
         parts.append(f"{n} reviews repeat each other's wording.")
