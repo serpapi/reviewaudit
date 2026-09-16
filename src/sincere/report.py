@@ -13,6 +13,7 @@ env = Environment(loader=FileSystemLoader(Path(__file__).parent / "templates"), 
 env.filters["thousands"] = lambda n: f"{n:,}" if isinstance(n, (int, float)) else n
 env.filters["pct"] = lambda x: f"{x:.0%}" if x is not None else "–"
 env.filters["day"] = lambda d: d.strftime("%-d %b %Y")
+env.filters["rating"] = lambda x: f"{x:.1f}" if isinstance(x, (int, float)) else x
 
 
 def timeline(reviews, suspects, windows, width=880, height=300, r=4):
@@ -82,8 +83,8 @@ def compared(measures, norms):
     return dict(places=norms["places"], rows=rows)
 
 
-def render(place, reviews, result, api, third_party=None, layout="report"):
-    tpl = env.get_template(f"{layout}.html")
+def render(place, reviews, result, api, third_party=None):
+    tpl = env.get_template("report.html")
     dates = sorted(r.date for r in reviews)
     checked = [r for r in reviews if r.history]
     findings, ruled_out, nature = build(place, reviews, result, checked)

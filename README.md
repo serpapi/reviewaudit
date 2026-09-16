@@ -25,9 +25,11 @@ afterwards (cached, free) and each report shows its numbers beside what is typic
 
 ## What it reads like
 
-A case file: the record (rating, sample, span, accounts pulled), the verdict, numbered
-findings each with its evidence, what was ruled out, the exhibits (timeline swarm, five-star
-share by account depth, the reviews taken out with links), and the method with its blind spots.
+A dashboard for one place: the verdict with the three ratings and the last 200 by stars,
+the findings as a table of contents that jumps to the card proving each one, every review on
+a timeline, five-star share by account depth, the pairs posted minutes apart, the place beside
+every other place read so far, what was ruled out, and (collapsed) the reviews taken out and
+the method with its blind spots.
 
 ## What it looks for
 
@@ -65,7 +67,7 @@ src/sincere/api.py        cached SerpApi calls, pagination, the empty-page retry
 src/sincere/signals.py    the tells, the baseline excess, suspect selection
 src/sincere/case.py       findings with evidence, what was ruled out, the nature of the padding
 src/sincere/report.py     chart geometry (timeline swarm, bars), rendering
-src/sincere/templates/    one HTML page plus three partials, no build step, light and dark
+src/sincere/templates/    report.html plus partials and style.css, no build step, light and dark
 ```
 
 `google_maps_reviews` pages asked for with `num=20` sometimes come back empty with

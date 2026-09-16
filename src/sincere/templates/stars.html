@@ -1,4 +1,4 @@
-  <h3>The last {{ reviews | length }} by rating, and what was taken out</h3>
+  {% if not compact %}<h3>The last {{ reviews | length }} by rating, and what was taken out</h3>{% endif %}
   <div class="bars">
     {% for s in stars %}
     <span class="stars">{{ '★' * s.stars }}<i>{{ '★' * (5 - s.stars) }}</i></span>

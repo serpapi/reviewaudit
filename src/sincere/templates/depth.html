@@ -1,7 +1,7 @@
 <div class="bars">
   {% for row in result.depth %}
-  <span class="lab">{{ row.label }} review{{ 's' if row.label != '1' }}</span>
-  <span class="track">
+  <span class="lab" title="{{ row.n }} reviews from accounts with {{ row.label }} lifetime review{{ 's' if row.label != '1' }}, {{ row.fives }} of them five-star">{{ row.label }} review{{ 's' if row.label != '1' }}</span>
+  <span class="track" title="{{ row.fives }} of {{ row.n }} five-star">
     {% if row.share is not none %}
     <span class="fill" style="width:{{ '%.1f' | format(row.share * 100) }}%"></span>
     {% if result.base_share is not none and loop.index <= 2 and row.share > result.base_share %}

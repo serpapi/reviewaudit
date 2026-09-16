@@ -1,5 +1,5 @@
   {% if result.suspects %}
-  <h3>The {{ result.suspects | length }} review{{ 's' if result.suspects | length != 1 }} taken out{{ ', most suspicious first' if result.suspects | length > 1 }}</h3>
+  {% if not compact %}<h3>The {{ result.suspects | length }} review{{ 's' if result.suspects | length != 1 }} taken out{{ ', most suspicious first' if result.suspects | length > 1 }}</h3>{% endif %}
   <p class="caption">Each links to the review on Google. Violet tags are tells; outlined tags are what earns trust back.</p>
   <ol class="ledger">
     {% for r in result.suspects %}
