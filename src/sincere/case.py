@@ -113,7 +113,7 @@ def build(place, reviews, result, checked):
             title="Five-star reviews arrive in batches, minutes apart",
             claim=f"{c['observed']} five-star reviews were posted within ten minutes of the previous one. At this place's pace, allowing for the hours of the day people post, that should happen about {c['expected']:g} times in {len(fives)} reviews. "
                   + ("Independent customers do not queue up. " + "; ".join(kinds) + "." if kinds else "Independent customers do not queue up."),
-            table=dict(head=["gap", "first", "second", "when", "what links them"], rows=[[f"{g:.0f} min" if g >= 1 else "< 1 min", a.user_name, b.user_name, f"{a.date:%-d %b %Y %H:%M} UTC", _link(a, b)] for a, b, g in tight]),
+            table=dict(head=["gap", "first", "second", "when", "what links them"], rows=[[f"{g:.0f} min" if g >= 1 else "< 1 min", a.user_name, b.user_name, f"{a.date:%-d %b %Y, %H:%M} UTC", _link(a, b)] for a, b, g in tight]),
         ))
     elif c["observed"]:
         ruled_out.append(f"{c['observed']} five-star reviews came within ten minutes of another; {c['expected']:g} would be expected from the hours people post here, so not out of line.")

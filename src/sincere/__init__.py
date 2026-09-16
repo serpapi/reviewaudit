@@ -33,6 +33,7 @@ def main():
     ap.add_argument("--lookups", type=int, default=30, help="reviewer histories to pull (1 call each)")
     ap.add_argument("--hl", default="en")
     ap.add_argument("--out", help="report path (default reports/<place>.html)")
+    ap.add_argument("--layout", default="report", choices=["report", "brief", "grid"], help="page shape (default report: the case file)")
     ap.add_argument("--norms", action="store_true", help="rebuild norms.json and the docket (reports/sincere.html) from every case under reports/, then exit")
     args = ap.parse_args()
     if args.norms:
@@ -70,9 +71,9 @@ def main():
     for t, n in result["tell_counts"].most_common():
         print(f"  {n:3d}  {t}")
 
-    out = Path(args.out or f"reports/{slug(place)}.html")
+    out = Path(args.out or f"reports/{slug(place)}{'' if args.layout == 'report' else '-' + args.layout}.html")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(place, reviews, result, api, third_party))
+    out.write_text(render(place, reviews, result, api, third_party, args.layout))
     out.with_suffix(".json").write_text(json.dumps(dict(
         title=place["title"], where=locality(place), data_id=place["data_id"], rating=place.get("rating"), reviews=place.get("reviews"), read=len(reviews),
         tier=v["tier"], padded=round(v["padded"], 3), sample_rating=result["sample_rating"], clean_rating=result["clean_rating"],

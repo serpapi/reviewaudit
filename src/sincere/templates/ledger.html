@@ -1,0 +1,25 @@
+  {% if result.suspects %}
+  <h3>The {{ result.suspects | length }} review{{ 's' if result.suspects | length != 1 }} taken out{{ ', most suspicious first' if result.suspects | length > 1 }}</h3>
+  <p class="caption">Each links to the review on Google. Violet tags are tells; outlined tags are what earns trust back.</p>
+  <ol class="ledger">
+    {% for r in result.suspects %}
+    <li>
+      <div class="rate">{{ '★' * r.rating }}<i>{{ '★' * (5 - r.rating) }}</i><small>{{ r.date | day }}</small></div>
+      <div>
+        <div class="who">
+          <a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a>
+          <span>{% if r.history and r.history.n > r.user_reviews %}{{ r.history.n }} reviews and ratings{% elif r.user_reviews <= 1 %}their only review{% else %}{{ r.user_reviews }} reviews in total{% endif %}{% if r.local_guide %} · Local Guide{% endif %}{% if r.photos %} · {{ r.photos }} photo{{ 's' if r.photos != 1 }}{% endif %}</span>
+        </div>
+        <div class="chips">
+          {% for t, why in r.tells.items() %}<span class="chip" title="{{ why }}">{{ t }}{% if t in ("praise burst", "attack burst", "minutes apart", "ring", "only praises", "brand loyal", "echo", "names staff") %}: {{ why }}{% endif %}</span>{% endfor %}
+          {% for t in r.trust %}<span class="chip trust">{{ t }}</span>{% endfor %}
+        </div>
+        {% if r.text %}<q title="{{ r.text }}">{{ r.text }}</q>{% endif %}
+        {% if r.history %}
+        <div class="hist">Record: {% for s in (5, 4, 3, 2, 1) if r.history.ratings[s] %}{{ r.history.ratings[s] }}×{{ s }}★{{ ', ' if not loop.last }}{% endfor %}{% if r.history.places %} · {{ r.history.places[:8] | join(", ") }}{% if r.history.places | length > 8 %}, +{{ r.history.places | length - 8 }} more{% endif %}{% else %} · nothing but this place{% endif %}</div>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+  {% endif %}

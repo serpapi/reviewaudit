@@ -1,0 +1,9 @@
+{% if compared %}
+<div class="stats">
+  {% for c in compared.rows if c.label in ("batches", "reviews naming staff", "reviewers with no record", "five-stars with a photo") %}
+  <div><b class="{{ 'hi' if c.high or c.low }}">{{ c.here }}</b><span>{{ c.label }}<br><small>typical {{ c.typical }}</small></span></div>
+  {% endfor %}
+</div>
+{% else %}
+{% include "record.html" %}
+{% endif %}

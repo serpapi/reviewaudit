@@ -1,0 +1,12 @@
+  <h3>The last {{ reviews | length }} by rating, and what was taken out</h3>
+  <div class="bars">
+    {% for s in stars %}
+    <span class="stars">{{ '★' * s.stars }}<i>{{ '★' * (5 - s.stars) }}</i></span>
+    <span class="track">
+      <span class="fill" style="width:{{ '%.1f' | format(s.share * 100) }}%"></span>
+      {% if s.sus %}<span class="over" style="left:{{ '%.1f' | format((s.n - s.sus) / (reviews | length) * 100) }}%;width:{{ '%.1f' | format(s.sus / (reviews | length) * 100) }}%"></span>{% endif %}
+    </span>
+    <span class="val">{{ s.n }}</span>
+    <span class="n">{% if s.sus %}{{ s.sus }} out{% endif %}</span>
+    {% endfor %}
+  </div>

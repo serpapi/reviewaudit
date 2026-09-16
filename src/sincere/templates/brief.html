@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+{% include "head.html" %}
+</head>
+<body>
+<header>
+  <a class="wordmark" href="sincere.html">sincere</a>
+  <span class="meta">case read on {{ generated }}</span>
+</header>
+<main>
+{% set v = result.verdict %}
+{% set fives = reviews | selectattr("rating", "equalto", 5) | list | length %}
+{% set k = result.suspects | selectattr("rating", "equalto", 5) | list | length %}
+{% set brief = true %}
+
+<h1>{{ place.title }}</h1>
+<p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }} · {{ place.rating }} on Google from {{ place.reviews | thousands }} reviews</p>
+
+<section class="brief">
+{% include "verdict.html" %}
+{% include "timeline.html" %}
+{% include "stats.html" %}
+</section>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-panel="findings">Findings<b>{{ findings | length }}</b></button>
+  <button role="tab" aria-selected="false" data-panel="evidence">Evidence</button>
+  <button role="tab" aria-selected="false" data-panel="taken">Taken out<b>{{ result.suspects | length }}</b></button>
+  <button role="tab" aria-selected="false" data-panel="method">Method</button>
+</nav>
+
+<div class="panel" id="findings">
+{% include "findings.html" %}
+{% include "ruled.html" %}
+</div>
+<div class="panel" id="evidence" hidden>
+<div class="exhibits">
+  <h3>Reviews read</h3>
+  {% include "record.html" %}
+  <h3>Five-star share by the reviewer's record</h3>
+  {% include "depth.html" %}
+{% include "stars.html" %}
+{% include "compare.html" %}
+  {% if result.echoes %}
+  <h3>Reviews that repeat each other</h3>
+  {% include "echoes.html" %}
+  {% endif %}
+</div>
+</div>
+<div class="panel" id="taken" hidden>
+<div class="exhibits">
+{% include "ledger.html" %}
+{% if not result.suspects %}<p class="caption">Nothing was taken out.</p>{% endif %}
+</div>
+</div>
+<div class="panel" id="method" hidden>
+{% include "method.html" %}
+</div>
+</main>
+<footer class="end">
+  <span>sincere reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>.</span>
+  <span>{{ reviews | length }} reviews · {{ first | day }} to {{ last | day }}</span>
+</footer>
+{% include "script.html" %}
+<script>
+(() => {
+  const tabs = [...document.querySelectorAll('.tabs button')], panels = [...document.querySelectorAll('.panel')];
+  const pick = id => { tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.panel === id)); panels.forEach(p => p.hidden = p.id !== id); };
+  tabs.forEach(t => t.addEventListener('click', () => { pick(t.dataset.panel); history.replaceState(null, '', '#' + t.dataset.panel); }));
+  const h = location.hash.slice(1); if (panels.some(p => p.id === h)) pick(h);
+})();
+</script>
+</body>
+</html>

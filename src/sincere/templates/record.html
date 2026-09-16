@@ -1,0 +1,9 @@
+<div class="record">
+  <div><b class="num">{{ place.rating }}</b><span>on Google, from {{ place.reviews | thousands }} reviews</span></div>
+  <div><b class="num">{{ reviews | length }}</b><span>newest reviews read, {{ first | day }} to {{ last | day }}</span></div>
+  <div><b class="num">{{ fives }}</b><span>of them five-star</span></div>
+  <div><b class="num">{{ checked | length }}</b><span>reviewer records pulled in full</span></div>
+</div>
+{% set span = (tl.hi - tl.lo).days %}
+{% if third_party %}<p class="caption" style="margin-top:12px">Maps also shows {{ third_party.values() | sum }} reviews here from {{ third_party.keys() | join(', ') }}. They were left out: there is no account behind them to read.</p>{% endif %}
+{% if span < 45 %}<p class="caption" style="margin-top:12px">The {{ reviews | length }} newest reviews cover only {{ span }} days here; bursts and batches are judged inside that window, and the lifetime rating is the better long view. <code>--reviews 600</code> reads further back.</p>{% endif %}

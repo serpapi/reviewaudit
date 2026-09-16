@@ -1,0 +1,20 @@
+<script>
+(() => {
+  const tip = document.querySelector('.tip'), box = document.querySelector('.tl');
+  if (!tip || !box) return;
+  const show = a => {
+    const d = a.dataset;
+    tip.innerHTML = `<b>${d.name}</b> · ${d.date}<br><span class="s">${'★'.repeat(d.rating)}</span>${d.tells ? `<br><span class="t">${d.tells}</span>` : ''}`;
+    const r = a.getBoundingClientRect(), b = box.getBoundingClientRect();
+    tip.style.left = (r.left + r.width / 2 - b.left) + 'px';
+    tip.style.top = (r.top - b.top) + 'px';
+    tip.classList.add('on');
+  };
+  box.querySelectorAll('svg a').forEach(a => {
+    a.addEventListener('mouseenter', () => show(a));
+    a.addEventListener('focus', () => show(a));
+    a.addEventListener('mouseleave', () => tip.classList.remove('on'));
+    a.addEventListener('blur', () => tip.classList.remove('on'));
+  });
+})();
+</script>

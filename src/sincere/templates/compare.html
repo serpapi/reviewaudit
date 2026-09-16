@@ -1,0 +1,8 @@
+  {% if compared %}
+  <h3>This place beside the {{ compared.places - 1 }} others read so far</h3>
+  <p class="caption">Median and the middle 80% of every place sincere has read. A number outside that band is marked.</p>
+  <table class="facts wide">
+    <tr><th>measure</th><th>here</th><th>typical</th><th>usual range</th></tr>
+    {% for c in compared.rows %}<tr class="{{ 'high' if c.high else 'low' if c.low }}"><td title="{{ c.desc }}">{{ c.label }}</td><td class="here">{{ c.here }}{% if c.high or c.low %} <span class="mark">{{ '▲' if c.high else '▼' }}</span>{% endif %}</td><td>{{ c.typical }}</td><td>{{ c.range }}</td></tr>{% endfor %}
+  </table>
+  {% endif %}

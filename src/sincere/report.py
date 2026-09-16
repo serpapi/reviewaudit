@@ -82,8 +82,8 @@ def compared(measures, norms):
     return dict(places=norms["places"], rows=rows)
 
 
-def render(place, reviews, result, api, third_party=None):
-    tpl = env.get_template("report.html")
+def render(place, reviews, result, api, third_party=None, layout="report"):
+    tpl = env.get_template(f"{layout}.html")
     dates = sorted(r.date for r in reviews)
     checked = [r for r in reviews if r.history]
     findings, ruled_out, nature = build(place, reviews, result, checked)

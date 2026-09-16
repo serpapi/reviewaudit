@@ -1,0 +1,26 @@
+<h2 class="mh">Method</h2>
+<p class="caption">{{ calls }} SerpApi calls: one <code>google_maps</code> search for the place, {{ (reviews | length / 20) | round(0, 'ceil') | int }} pages of <code>google_maps_reviews</code> newest first, and <code>google_maps_contributor_reviews</code> for the {{ checked | length }} accounts worth a closer look. Nothing scraped by hand; nothing kept beyond the responses.</p>
+<div class="method">
+  <div>
+    <h3>The tells, and how much each one weighs</h3>
+    <table>
+      {% for name, (w, desc) in tells.items() %}<tr><td>{{ name }}</td><td>{{ desc }}</td><td class="w">{{ w }}</td></tr>{% endfor %}
+    </table>
+    <h3 style="margin-top:20px">What earns trust back</h3>
+    <table>
+      {% for name, w in trust.items() %}<tr><td>{{ name }}</td><td class="w">−{{ w }}</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div>
+    <h3>What the numbers mean</h3>
+    <p>A review's suspicion is the chance at least one of its tells is a true signal (they combine as noisy-OR), discounted by the traits that cost real effort to fake. The score ranks; it never convicts on its own.</p>
+    <p>What gets taken out is only what the place's own reviewers cannot explain: the five-stars from thin accounts beyond the rate accounts with 4 to 50 reviews give, the reviews in a burst beyond that week's expected count, the pairs posted minutes apart beyond what the hours people post here predict, and every member of an echo or a ring. Bursts are judged against the sample's median week (Poisson tail below 0.001, at least 2.5× the median).</p>
+    <h3>Where this is blind</h3>
+    <ul>
+      <li>A place where everyone gives five stars looks the same whether they mean it or not. The gradient is the evidence; a flat 95% is not.</li>
+      <li>A first review at a famous place is normal. That is why a thin account alone never counts, only the excess does.</li>
+      <li>Two accounts that share other places are usually a couple. Rings need three.</li>
+      <li>"Newest first" still surfaces old reviews edited recently; they are shown but kept off the axis.</li>
+    </ul>
+  </div>
+</div>
