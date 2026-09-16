@@ -19,6 +19,10 @@ re-run or a template change costs nothing:
 3. `google_maps_contributor_reviews` for the reviewers worth a closer look: everything
    the account has ever reviewed, with the place behind each rating.
 
+`uv run sincere --norms` folds every case under `reports/` into `norms.json` (median and
+middle 80% of each measure) and writes the docket, `reports/sincere.html`. Re-run the places
+afterwards (cached, free) and each report shows its numbers beside what is typical.
+
 ## What it reads like
 
 A case file: the record (rating, sample, span, accounts pulled), the verdict, numbered
