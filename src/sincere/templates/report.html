@@ -84,6 +84,9 @@ table.facts { border-collapse: collapse; margin-top: 16px; font-size: 14px; font
 table.facts th { text-align: left; font-weight: 500; color: var(--muted); padding: 0 22px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
 table.facts td { padding: 6px 22px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 table.facts tr > :first-child { color: var(--ink-2); }
+table.facts.wide { width: 100%; }
+table.facts .here { font-weight: 600; }
+table.facts .mark { color: var(--sus); font-size: 11px; vertical-align: 1px; }
 
 /* ruled out */
 .ruled { list-style: none; margin: 0; padding: 0; max-width: 70ch; }
@@ -249,6 +252,14 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
     <span class="n">{% if s.sus %}{{ s.sus }} out{% endif %}</span>
     {% endfor %}
   </div>
+  {% if compared %}
+  <h3>This place beside the {{ compared.places - 1 }} others read so far</h3>
+  <p class="caption">Median and the middle 80% of every place sincere has read. A number outside that band is marked.</p>
+  <table class="facts wide">
+    <tr><th>measure</th><th>here</th><th>typical</th><th>usual range</th></tr>
+    {% for c in compared.rows %}<tr class="{{ 'high' if c.high else 'low' if c.low }}"><td title="{{ c.desc }}">{{ c.label }}</td><td class="here">{{ c.here }}{% if c.high or c.low %} <span class="mark">{{ '▲' if c.high else '▼' }}</span>{% endif %}</td><td>{{ c.typical }}</td><td>{{ c.range }}</td></tr>{% endfor %}
+  </table>
+  {% endif %}
   {% if "echoes" not in embedded and result.echoes %}
   <h3>Reviews that repeat each other</h3>
   {% include "echoes.html" %}

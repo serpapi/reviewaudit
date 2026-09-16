@@ -5,6 +5,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
+from . import norms as _norms
 from .case import build
 from .signals import TELLS, TRUST
 
@@ -68,6 +69,19 @@ def stars_table(reviews, suspects):
     return [dict(stars=s, n=sum(r.rating == s for r in reviews), sus=sum(r.rating == s and r.id in ids for r in reviews), share=sum(r.rating == s for r in reviews) / total) for s in range(5, 0, -1)]
 
 
+def compared(measures, norms):
+    """Each measure beside the median and middle 80% of every place read so far."""
+    if not norms or norms["places"] < 8:
+        return None
+    fmt = lambda k, v: f"{v:.1f}×" if k == "close_ratio" else (f"{v:+.0%}" if k == "first_gap" else f"{v:.0%}")
+    rows = []
+    for key, (label, desc) in _norms.LABELS.items():
+        n, v = norms["measures"].get(key), measures.get(key)
+        if n and v is not None:
+            rows.append(dict(label=label, desc=desc, here=fmt(key, v), typical=fmt(key, n["median"]), range=f"{fmt(key, n['p10'])} to {fmt(key, n['p90'])}", high=v > n["p90"], low=v < n["p10"]))
+    return dict(places=norms["places"], rows=rows)
+
+
 def render(place, reviews, result, api):
     tpl = env.get_template("report.html")
     dates = sorted(r.date for r in reviews)
@@ -83,6 +97,7 @@ def render(place, reviews, result, api):
         embedded={f.get("exhibit") for f in findings},
         tl=timeline(reviews, result["suspects"], result["bursts"]),
         stars=stars_table(reviews, result["suspects"]),
+        compared=compared(result["measures"], _norms.load()),
         checked=checked,
         first=dates[0],
         last=dates[-1],
@@ -91,3 +106,12 @@ def render(place, reviews, result, api):
         calls=api.calls + api.cached,
         generated=datetime.now().strftime("%-d %B %Y"),
     )
+
+
+def docket(reports_dir):
+    """An index of every case, most padded first."""
+    import json
+
+    cases = [json.loads(p.read_text()) for p in Path(reports_dir).glob("*.json")]
+    cases.sort(key=lambda c: -c["padded"])
+    return env.get_template("docket.html").render(cases=cases, generated=datetime.now().strftime("%-d %B %Y"))

@@ -6,19 +6,27 @@ import re
 import unicodedata
 from pathlib import Path
 
-from . import signals
+import json
+
+from . import norms, signals
 from .api import Api
-from .report import render
+from .report import docket, render
 
 
 def main():
     ap = argparse.ArgumentParser(prog="sincere", description=__doc__)
-    ap.add_argument("place", help="a Maps search ('Nusr-Et Steakhouse Etiler') or a data_id (0x…:0x…)")
+    ap.add_argument("place", nargs="?", help="a Maps search ('Nusr-Et Steakhouse Etiler') or a data_id (0x…:0x…)")
     ap.add_argument("--reviews", type=int, default=200, help="newest reviews to read (default 200 ≈ 10 calls)")
     ap.add_argument("--lookups", type=int, default=30, help="reviewer histories to pull (1 call each)")
     ap.add_argument("--hl", default="en")
     ap.add_argument("--out", help="report path (default reports/<place>.html)")
+    ap.add_argument("--norms", action="store_true", help="rebuild norms.json and the docket (reports/index.html) from every case under reports/, then exit")
     args = ap.parse_args()
+    if args.norms:
+        n = norms.build("reports")
+        Path("reports/index.html").write_text(docket("reports"))
+        print(f"norms from {n['places']} places: " + ", ".join(f"{k} {v['median']:.2f}" for k, v in n["measures"].items()) + " → reports/index.html")
+        return
 
     key = os.environ.get("SERPAPI_KEY") or os.environ.get("SERPAPI_API_KEY")
     if not key:
@@ -51,4 +59,9 @@ def main():
     out = Path(args.out or f"reports/{re.sub(r'[^a-z0-9]+', '-', slug).strip('-')}.html")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render(place, reviews, result, api))
+    out.with_suffix(".json").write_text(json.dumps(dict(
+        title=place["title"], data_id=place["data_id"], rating=place.get("rating"), reviews=place.get("reviews"), read=len(reviews),
+        tier=v["tier"], padded=round(v["padded"], 3), sample_rating=result["sample_rating"], clean_rating=result["clean_rating"],
+        taken_out=len(result["suspects"]), measures=result["measures"], report=out.name,
+    ), ensure_ascii=False, indent=1))
     print(f"→ {out}  ({api.calls} calls, {api.cached} from cache)")

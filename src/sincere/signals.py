@@ -326,8 +326,19 @@ def analyze(reviews, histories, place_data_id, place_title, place_address=""):
     suspects = pick_suspects(reviews, excess, burst_windows, close)
     kept = [r for r in reviews if r not in suspects]
     mean = lambda rs: round(sum(r.rating for r in rs) / len(rs), 2) if rs else None
+    fives = [r for r in reviews if r.rating == 5]
+    measures = dict(  # the place-level numbers that norms are drawn from
+        first_share=rows[0]["n"] / len(reviews),
+        first_gap=(rows[0]["share"] - base) if base is not None and rows[0]["share"] is not None else None,
+        close_ratio=close["observed"] / close["expected"] if close["expected"] else None,
+        staff_share=sum("names staff" in r.tells for r in reviews) / len(reviews),
+        photo_share=sum(r.photos > 0 for r in fives) / len(fives) if fives else None,
+        text_share=sum(bool(r.text) for r in fives) / len(fives) if fives else None,
+        five_share=len(fives) / len(reviews),
+    )
     return dict(
         verdict=verdict(reviews, suspects),
+        measures=measures,
         sample_rating=mean(reviews),
         clean_rating=mean(kept),
         suspects=suspects,
