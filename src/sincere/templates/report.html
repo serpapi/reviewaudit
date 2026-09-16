@@ -254,7 +254,7 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
   {% include "echoes.html" %}
   {% endif %}
   {% if result.suspects %}
-  <h3>The {{ result.suspects | length }} reviews taken out, most suspicious first</h3>
+  <h3>The {{ result.suspects | length }} review{{ 's' if result.suspects | length != 1 }} taken out{{ ', most suspicious first' if result.suspects | length > 1 }}</h3>
   <p class="caption">Each links to the review on Google. Violet tags are tells; outlined tags are what earns trust back.</p>
   <ol class="ledger">
     {% for r in result.suspects %}

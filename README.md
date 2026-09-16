@@ -19,6 +19,12 @@ re-run or a template change costs nothing:
 3. `google_maps_contributor_reviews` for the reviewers worth a closer look: everything
    the account has ever reviewed, with the place behind each rating.
 
+## What it reads like
+
+A case file: the record (rating, sample, span, accounts pulled), the verdict, numbered
+findings each with its evidence, what was ruled out, the exhibits (timeline swarm, five-star
+share by account depth, the reviews taken out with links), and the method with its blind spots.
+
 ## What it looks for
 
 Account tells (`only review`, `thin account`, `rating only`) never condemn a review on
@@ -29,8 +35,15 @@ explain:
   give the same place;
 - the reviews in a week where one rating arrived far faster than the sample's median
   week (Poisson tail below 0.001, at least 2.5×), beyond that week's expected count;
+- the five-stars posted within ten minutes of another, beyond what the hours people post
+  at predict (hour-of-day aware, so a lunch rush is not a batch);
 - every member of an echo (texts sharing half their 3-word shingles) or a ring (three or
   more checked accounts that pairwise share other places).
+
+Two more tells say what kind of padding it is rather than how much: reviews that name a
+member of staff ("Dalyan bey", "our waiter Gökmen", "Dr Asil") are the mark of a review
+asked for on the spot, and pairs minutes apart that share a surname are one party counted
+twice. The verdict says which dominates: customers asked at the table, or strangers for hire.
 
 Each review's suspicion is the noisy-OR of its tells' weights, discounted by traits that
 cost effort to fake (Local Guide, photos, long text, a deep record). Weights live in
@@ -46,8 +59,9 @@ edited recently.
 ```
 src/sincere/api.py        cached SerpApi calls, pagination, the empty-page retry
 src/sincere/signals.py    the tells, the baseline excess, suspect selection
-src/sincere/report.py     chart geometry (timeline swarm, bars), the verdict sentence
-src/sincere/templates/    one HTML page, no build step, light and dark
+src/sincere/case.py       findings with evidence, what was ruled out, the nature of the padding
+src/sincere/report.py     chart geometry (timeline swarm, bars), rendering
+src/sincere/templates/    one HTML page plus three partials, no build step, light and dark
 ```
 
 `google_maps_reviews` pages asked for with `num=20` sometimes come back empty with

@@ -233,8 +233,10 @@ def history_tells(reviews, histories, place_data_id, place_title):
             contributions=h.get("contributor", {}).get("contributions", {}),
         )
         places_by_user[r.user_id] = {x["place_info"]["data_id"] for x in others if x["place_info"].get("data_id")}
-        if len(hist) >= 4:  # `user.reviews` counts written reviews only; the record shows the account is not thin after all
+        # `user.reviews` counts written reviews only; the full record may show the account is not thin after all
+        if len(hist) >= 2:
             r.tells.pop("only review", None)
+        if len(hist) >= 4:
             r.tells.pop("thin account", None)
         rated = [int(x["rating"]) for x in hist if "rating" in x]
         if len(rated) >= 3 and rated.count(5) / len(rated) >= 0.9:
