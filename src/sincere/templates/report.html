@@ -108,10 +108,10 @@
   {% if F.minutes %}
   <section class="card" id="batches">
     <h3>Five-star reviews posted minutes apart, the tightest five</h3>
-    <table class="facts pairs">
+    <div class="scroll"><table class="facts pairs">
       <tr>{% for h in F.minutes.table.head %}<th>{{ h }}</th>{% endfor %}</tr>
       {% for row in F.minutes.table.rows %}<tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}
-    </table>
+    </table></div>
     <p class="why"><b>{{ F.minutes.title }}.</b> {{ F.minutes.claim }}</p>
     {% if F.staff %}<p class="why"><b>{{ F.staff.title }}.</b> {{ F.staff.claim }}</p>{% endif %}
   </section>

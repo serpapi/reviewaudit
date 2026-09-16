@@ -74,6 +74,10 @@ table.facts { border-collapse: collapse; margin-top: 16px; font-size: 14px; font
 table.facts th { text-align: left; font-weight: 500; color: var(--muted); padding: 0 22px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
 table.facts td { padding: 6px 22px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
 table.facts td:last-child { white-space: normal; }
+table.facts th:last-child, table.facts td:last-child { padding-right: 0; }
+table.facts.wide td:first-child { white-space: normal; }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.scroll table.facts td:last-child { white-space: nowrap; }
 table.facts tr > :first-child { color: var(--ink-2); }
 table.facts.wide { width: 100%; }
 table.facts .here { font-weight: 600; }
