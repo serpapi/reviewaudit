@@ -23,6 +23,7 @@ table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;
 th { text-align:left; font-weight:500; color:var(--muted); font-size:13.5px; padding:0 14px 8px 0; border-bottom:1px solid var(--line); }
 td { padding:11px 14px 11px 0; border-bottom:1px solid var(--line); vertical-align:top; }
 td.t a { font-weight:600; text-decoration-color:var(--line); }
+td.p { width:52px; padding-right:10px; } td.p img { width:52px; height:52px; object-fit:cover; border-radius:8px; display:block; }
 td.t span { display:block; color:var(--muted); font-size:13px; }
 td.n { text-align:right; white-space:nowrap; }
 .tier { font:600 14px var(--text); }
@@ -38,10 +39,11 @@ td.n { text-align:right; white-space:nowrap; }
 <h1>Cases</h1>
 <p class="sub">{{ cases | length }} places read, most padded first. Each row is a case file: what was found, what was ruled out, every review taken out with its link.</p>
 <table>
-  <tr><th>place</th><th>verdict</th><th>five-stars beyond baseline</th><th>Google</th><th>recent → without them</th></tr>
+  <tr><th></th><th>place</th><th>verdict</th><th>five-stars beyond baseline</th><th>Google</th><th>recent → without them</th></tr>
   {% for c in cases %}
   <tr>
-    <td class="t"><a href="{{ c.report }}">{{ c.title }}</a><span>{{ c.where }}{{ ' · ' if c.where }}{{ c.read }} of {{ c.reviews | thousands }} reviews read</span></td>
+    <td class="p">{% if c.thumbnail %}<img src="{{ c.thumbnail }}" alt="" loading="lazy">{% endif %}</td>
+    <td class="t"><a href="{{ c.report }}">{{ c.title }}</a><span>{{ c.type if c.type is string else (c.type or [''])[0] }}{{ ' · ' if c.type }}{{ c.where }}{{ ' · ' if c.where }}{{ c.read }} of {{ c.reviews | thousands }} reviews read</span></td>
     <td><span class="tier {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}</span></td>
     <td><span class="bar" style="width:{{ (c.padded * 160) | int }}px"></span>{{ '%.0f' | format(c.padded * 100) }}%</td>
     <td class="n">{{ c.rating }}</td>

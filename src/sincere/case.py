@@ -178,7 +178,7 @@ def build(place, reviews, result, checked):
             findings.append(dict(
                 id="drift", strength="weak",
                 title=f"Recent reviews run {abs(drift):.1f} stars {'above' if drift > 0 else 'below'} the lifetime rating",
-                claim=f"Google shows {place['rating']} from all {place.get('reviews', 0):,} reviews; the last {len(reviews)} average {result['sample_rating']}. "
+                claim=f"The last {len(reviews)} average {result['sample_rating']} against {place['rating']} over all {place.get('reviews', 0):,} reviews. "
                       + ("Either the place got better, or the praise did." if drift > 0 else "Either the place got worse, or the older praise was the padding."),
             ))
 

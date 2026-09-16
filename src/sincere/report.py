@@ -1,5 +1,6 @@
 """One self-contained HTML page per place. Charts are inline SVG laid out here; the template only draws."""
 
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -83,6 +84,27 @@ def compared(measures, norms):
     return dict(places=norms["places"], rows=rows)
 
 
+def map_tile(gps, zoom=15, size=200):
+    """A 2×2 OpenStreetMap tile mosaic positioned so the place sits in the middle of a `size` px window."""
+    if not gps:
+        return None
+    lat, lon = math.radians(gps["latitude"]), gps["longitude"]
+    n = 2 ** zoom
+    x = (lon + 180) / 360 * n
+    y = (1 - math.log(math.tan(lat) + 1 / math.cos(lat)) / math.pi) / 2 * n
+    tx, ty = int(x - 0.5), int(y - 0.5)  # top-left tile of the 2×2 block that keeps the point away from the edges
+    px, py = (x - tx) * 256, (y - ty) * 256
+    return dict(zoom=zoom, size=size, tiles=[(tx + dx, ty + dy) for dy in (0, 1) for dx in (0, 1)], dx=round(size / 2 - px), dy=round(size / 2 - py),
+                link=f"https://www.google.com/maps/search/?api=1&query={gps['latitude']},{gps['longitude']}")
+
+
+def lifetime(place):
+    """Google's own star counts for the place, as shares."""
+    rows = place.get("rating_summary") or []
+    total = sum(r["amount"] for r in rows)
+    return {r["stars"]: r["amount"] / total for r in rows} if total else {}
+
+
 def render(place, reviews, result, api, third_party=None):
     tpl = env.get_template("report.html")
     dates = sorted(r.date for r in reviews)
@@ -100,6 +122,8 @@ def render(place, reviews, result, api, third_party=None):
         stars=stars_table(reviews, result["suspects"]),
         compared=compared(result["measures"], _norms.load()),
         third_party=third_party or {},
+        map=map_tile(place.get("gps_coordinates")),
+        lifetime=lifetime(place),
         checked=checked,
         first=dates[0],
         last=dates[-1],

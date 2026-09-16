@@ -43,6 +43,12 @@ class Api:
             raise SystemExit(f"no place found for {query!r}")
         return place
 
+    def place_card(self, data_id, title, address):
+        """The place's own Maps entry (photo, hours, lifetime star counts) for a run that started from a data_id."""
+        data = self.search(engine="google_maps", q=f"{title} {address}")
+        hits = [data.get("place_results")] if data.get("place_results") else data.get("local_results", [])
+        return next((h for h in hits if h and h.get("data_id") == data_id), {})
+
     def reviews(self, data_id, limit):
         """Newest-first pages of reviews. The first page is 8 regardless of `num`; the rest 20."""
         out, token = [], None

@@ -3,6 +3,7 @@
     {% for s in stars %}
     <span class="stars">{{ '★' * s.stars }}<i>{{ '★' * (5 - s.stars) }}</i></span>
     <span class="track">
+      {% if lifetime and lifetime[s.stars] is defined %}<span class="life" style="width:{{ '%.1f' | format(lifetime[s.stars] * 100) }}%" title="all time: {{ lifetime[s.stars] | pct }}"></span>{% endif %}
       <span class="fill" style="width:{{ '%.1f' | format(s.share * 100) }}%"></span>
       {% if s.sus %}<span class="over" style="left:{{ '%.1f' | format((s.n - s.sus) / (reviews | length) * 100) }}%;width:{{ '%.1f' | format(s.sus / (reviews | length) * 100) }}%"></span>{% endif %}
     </span>

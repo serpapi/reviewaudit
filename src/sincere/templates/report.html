@@ -19,20 +19,40 @@
 {# which card proves which finding #}
 {% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict"} %}
 
-<div class="hero">
-  <h1>{{ place.title }}</h1>
-  <p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }}</p>
-  <div class="meta">
-    <span><b>{{ place.rating | rating }}</b> on Google from <b>{{ place.reviews | thousands }}</b> reviews</span>
-    <span>read the <b>{{ reviews | length }}</b> newest, {{ tl.lo | day }} to {{ tl.hi | day }}{% if tl.earlier %} (+{{ tl.earlier | length }} older, edited recently){% endif %}</span>
-    <span><b>{{ checked | length }}</b> reviewer records pulled in full</span>
-    {% if third_party %}<span>{{ third_party.values() | sum }} {{ third_party.keys() | join('/') }} reviews left out, no account behind them</span>{% endif %}
-    {% if span < 45 %}<span>only {{ span }} days of reviews here; the lifetime rating is the longer view</span>{% endif %}
+<div class="hero {{ 'has-photo' if place.thumbnail }}">
+  {% if place.thumbnail %}<a class="photo" href="{{ place.photos_link or place.thumbnail }}" target="_blank" rel="noopener"><img src="{{ place.thumbnail }}" alt="" loading="lazy"></a>{% endif %}
+  <div class="about">
+    <h1>{{ place.title }}</h1>
+    <p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }}</p>
+    {% if place.description %}<p class="desc">{{ place.description }}</p>{% endif %}
+    <div class="meta">
+      <span><b>{{ place.rating | rating }}</b> on Google from <b>{{ place.reviews | thousands }}</b> reviews</span>
+      {% if place.price %}<span>{{ place.price }}</span>{% endif %}
+      {% if place.open_state %}<span>{{ place.open_state }}</span>{% endif %}
+    </div>
+    <div class="meta">
+      <span>read the <b>{{ reviews | length }}</b> newest, {{ tl.lo | day }} to {{ tl.hi | day }}{% if tl.earlier %} (+{{ tl.earlier | length }} older, edited recently){% endif %}</span>
+      <span><b>{{ checked | length }}</b> reviewer records pulled in full</span>
+      {% if third_party %}<span>{{ third_party.values() | sum }} {{ third_party.keys() | join('/') }} reviews left out, no account behind them</span>{% endif %}
+      {% if span < 45 %}<span>only {{ span }} days of reviews here; the lifetime rating is the longer view</span>{% endif %}
+    </div>
+    <div class="links">
+      {% if map %}<a href="{{ map.link }}" target="_blank" rel="noopener">Open in Maps</a>{% endif %}
+      {% if place.website %}<a href="{{ place.website }}" target="_blank" rel="noopener">Website</a>{% endif %}
+      {% if place.phone %}<a href="tel:{{ place.phone | replace(' ', '') }}">{{ place.phone }}</a>{% endif %}
+    </div>
   </div>
+  {% if map %}
+  <a class="map" href="{{ map.link }}" target="_blank" rel="noopener" title="Open in Google Maps">
+    <div class="tiles" style="transform:translate({{ map.dx }}px,{{ map.dy }}px)">{% for x, y in map.tiles %}<img src="https://tile.openstreetmap.org/{{ map.zoom }}/{{ x }}/{{ y }}.png" alt="" loading="lazy">{% endfor %}</div>
+    <span class="pin"></span>
+    <span class="osm">© OpenStreetMap</span>
+  </a>
+  {% endif %}
 </div>
 
 <div class="grid">
-  <section class="card c8 tall" id="verdict">
+  <section class="card c8" id="verdict">
     <p class="tier {{ 'genuine' if v.tier == 'looks genuine' else 'padded' }}">{{ v.tier | capitalize }}.</p>
     <p class="lede">
       {% if result.suspects %}<b>{{ k }} of the {{ fives }}</b> recent five-star reviews {{ 'is' if k == 1 else 'are' }} beyond what this place's own reviewers explain. {% if (result.clean_rating | rating) != (result.sample_rating | rating) %}Without them the last {{ reviews | length }} rate <b>{{ result.clean_rating | rating }}</b>, not {{ result.sample_rating | rating }}.{% else %}Taking {{ 'it' if result.suspects | length == 1 else 'them' }} out does not move the rating.{% endif %} {{ nature }}
@@ -44,7 +64,7 @@
       <div><b class="num {{ 'sus' if result.suspects }}">{{ result.clean_rating | rating }}</b><span>without the {{ result.suspects | length }}</span></div>
     </div>
     {% if F.drift %}<p class="why">{{ F.drift.claim }}</p>{% endif %}
-    <h3 class="sub">The last {{ reviews | length }} by rating{% if result.suspects %}, violet is what was taken out{% endif %}</h3>
+    <h3 class="sub">The last {{ reviews | length }} by rating{% if result.suspects %}, violet is what was taken out{% endif %}{% if lifetime %}; grey, all {{ place.reviews | thousands }} reviews{% endif %}</h3>
     <div class="exhibits">{% include "stars.html" %}</div>
   </section>
 
@@ -52,17 +72,14 @@
     <h3>Findings, strongest first</h3>
     {% if findings %}
     <ol class="toc">
-      {% for f in findings %}<li><a href="#{{ card_of.get(f.id, 'verdict') }}"><span class="n">{{ loop.index }}</span><span>{{ f.title }}</span><span class="dot {{ f.strength }}" title="{{ f.strength }}"></span></a></li>{% endfor %}
+      {% for f in findings %}<li><a href="#{{ card_of.get(f.id, 'verdict') }}" title="{{ f.title }}"><span class="n">{{ loop.index }}</span><span class="t">{{ f.title }}</span><span class="dot {{ f.strength }}" title="{{ f.strength }}"></span></a></li>{% endfor %}
     </ol>
     {% else %}<p class="none">Nothing rose to a finding. Everything checked is listed under ruled out.</p>{% endif %}
-  </section>
-
-  <section class="card c4" id="beside">
-    <h3>Beside the {{ compared.places - 1 if compared else 0 }} other places read</h3>
+    <h3 class="sub" id="beside">Beside the {{ compared.places - 1 if compared else 0 }} other places read</h3>
     {% if compared %}
     <table class="facts wide">
       <tr><th></th><th>here</th><th>typical</th></tr>
-      {% for c in compared.rows if c.label != "five-stars with text" %}
+      {% for c in compared.rows if c.label not in ("five-stars with text", "five-star share") %}
       <tr><td title="{{ c.desc }}">{{ c.label }}</td><td class="here">{{ c.here }}{% if c.high or c.low %} <span class="mark">{{ '▲' if c.high else '▼' }}</span>{% endif %}</td><td>{{ c.typical }}</td></tr>
       {% endfor %}
     </table>
@@ -76,16 +93,21 @@
     {% if not F["praise-burst"] and not F["attack-burst"] %}<p class="why">No week carried an unusual run of five- or one-star reviews.</p>{% endif %}
   </section>
 
-  <section class="card {{ 'c6' if F.minutes or F.staff else 'c7' }}" id="who">
+  <section class="card c6" id="who">
     <h3>Five-star share by the reviewer's record</h3>
     {% include "depth.html" %}
     {% for id in ("depth", "seasoned") if F[id] %}<p class="why"><b>{{ F[id].title }}.</b> {{ F[id].claim }}</p>{% endfor %}
     {% if not F.depth and result.base_share is not none %}<p class="why">First-time reviewers and accounts with a record give it five stars at about the same rate. That is what an earned rating looks like.</p>{% endif %}
   </section>
 
+  <section class="card c6" id="ruled">
+    <h3>Ruled out</h3>
+    <ul class="ruled">{% for line in ruled_out %}<li>{{ line }}</li>{% endfor %}</ul>
+  </section>
+
   {% if F.minutes %}
-  <section class="card c6" id="batches">
-    <h3>Five-star reviews posted minutes apart</h3>
+  <section class="card" id="batches">
+    <h3>Five-star reviews posted minutes apart, the tightest five</h3>
     <table class="facts pairs">
       <tr>{% for h in F.minutes.table.head %}<th>{{ h }}</th>{% endfor %}</tr>
       {% for row in F.minutes.table.rows %}<tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}
@@ -94,18 +116,11 @@
     {% if F.staff %}<p class="why"><b>{{ F.staff.title }}.</b> {{ F.staff.claim }}</p>{% endif %}
   </section>
   {% elif F.staff %}
-  <section class="card c6" id="batches">
+  <section class="card" id="batches">
     <h3>Reviews that name the staff</h3>
     <p class="why" style="margin-top:0"><b>{{ F.staff.title }}.</b> {{ F.staff.claim }}</p>
   </section>
   {% endif %}
-
-
-
-  <section class="card {{ '' if F.minutes or F.staff else 'c5' }}" id="ruled">
-    <h3>Ruled out</h3>
-    <ul class="ruled">{% for line in ruled_out %}<li>{{ line }}</li>{% endfor %}</ul>
-  </section>
 
   {% if result.echoes %}
   <section class="card" id="echoes">

@@ -48,6 +48,8 @@ def main():
 
     place = api.place(args.place)
     raw = api.reviews(place["data_id"], args.reviews)
+    if "title" not in place:  # started from a data_id: fetch the Maps entry now that the reviews told us the name
+        place = api.place_card(place["data_id"], api.place_info.get("title", ""), api.place_info.get("address", "")) or place
     place = {**api.place_info, **{k: v for k, v in place.items() if v}}  # search hit fills what place_info lacks
     reviews = [x for x in map(signals.parse, raw) if x]
     third_party = Counter(r.get("source", "?") for r in raw if r["user"].get("contributor_id") is None)
@@ -77,5 +79,6 @@ def main():
         title=place["title"], where=locality(place), data_id=place["data_id"], rating=place.get("rating"), reviews=place.get("reviews"), read=len(reviews),
         tier=v["tier"], padded=round(v["padded"], 3), sample_rating=result["sample_rating"], clean_rating=result["clean_rating"],
         taken_out=len(result["suspects"]), measures=result["measures"], report=out.name,
+        thumbnail=place.get("thumbnail"), open_state=place.get("open_state"), type=place.get("type"),
     ), ensure_ascii=False, indent=1))
     print(f"→ {out}  ({api.calls} calls, {api.cached} from cache)")
