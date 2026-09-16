@@ -55,11 +55,12 @@ class Api:
                 data = self.search(**params, no_cache=True)
             if token and not data.get("reviews"):
                 data = self.search(**{**params, "num": 10}, no_cache=True)
+            if not out:
+                self.place_info = data.get("place_info", {})
             out += data.get("reviews", [])
             token = data.get("serpapi_pagination", {}).get("next_page_token")
             if not token or not data.get("reviews"):
                 break
-        self.place_info = data.get("place_info", {})
         return out[:limit]
 
     def contributor(self, contributor_id):

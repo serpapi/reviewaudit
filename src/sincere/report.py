@@ -82,7 +82,7 @@ def compared(measures, norms):
     return dict(places=norms["places"], rows=rows)
 
 
-def render(place, reviews, result, api):
+def render(place, reviews, result, api, third_party=None):
     tpl = env.get_template("report.html")
     dates = sorted(r.date for r in reviews)
     checked = [r for r in reviews if r.history]
@@ -98,6 +98,7 @@ def render(place, reviews, result, api):
         tl=timeline(reviews, result["suspects"], result["bursts"]),
         stars=stars_table(reviews, result["suspects"]),
         compared=compared(result["measures"], _norms.load()),
+        third_party=third_party or {},
         checked=checked,
         first=dates[0],
         last=dates[-1],

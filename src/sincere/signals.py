@@ -54,8 +54,11 @@ class Review:
 
 
 def parse(raw):
-    text = (raw.get("extracted_snippet") or {}).get("original") or raw.get("snippet") or ""
+    """One Google review. Hotels carry Tripadvisor and Trip.com reviews too; those have no account behind them."""
     u = raw["user"]
+    if "contributor_id" not in u:
+        return None
+    text = (raw.get("extracted_snippet") or {}).get("original") or raw.get("snippet") or ""
     return Review(
         id=raw["review_id"],
         rating=int(raw["rating"]),
@@ -156,7 +159,8 @@ def close_pairs(reviews, rating=5, minutes=10):
     hits = sorted((r for r in reviews if r.rating == rating), key=lambda r: r.date)
     if len(hits) < 5:
         return dict(observed=0, expected=0.0, pairs=[], flagged=False)
-    days = len({r.date.date() for r in reviews})  # active days, so a few edited-years-ago reviews don't stretch the span
+    dates = sorted(r.date for r in reviews)
+    days = len({d.date() for d in dates[len(dates) // 10 :]})  # active days in the dense window; edited-years-ago reviews don't count
     per_hour = Counter(r.date.hour for r in hits)
     expected = sum(1 - math.exp(-minutes * per_hour[r.date.hour] / (days * 60)) for r in hits[:-1])
     pairs = [(a, b, (b.date - a.date).total_seconds() / 60) for a, b in zip(hits, hits[1:]) if (b.date - a.date).total_seconds() <= minutes * 60]
@@ -165,13 +169,15 @@ def close_pairs(reviews, rating=5, minutes=10):
             r.tells["minutes apart"] = f"{gap:.0f} min from another five-star" if gap >= 1 else "under a minute from another five-star"
     members = {r.id: r for a, b, _ in pairs for r in (a, b)}.values()
     surname = lambda r: r.user_name.split()[-1].lower() if len(r.user_name.split()) > 1 else None
+    staff = sum("names staff" in r.tells for r in members)
+    family = sum(1 for a, b, _ in pairs if surname(a) and surname(a) == surname(b))
+    ratio = len(pairs) / expected if expected else 0
+    # busy honest places run 1-2x the hourly model (people post after the meal, together); a batch is 4x, or 2.5x
+    # when the pairs themselves say why they are pairs (the same waiter named, the same surname)
+    flagged = len(pairs) >= 5 and (ratio >= 4 or (ratio >= 2.5 and staff + family >= 3))
     return dict(
-        observed=len(pairs), expected=round(expected, 1), pairs=sorted(pairs, key=lambda t: t[2]),
-        flagged=len(pairs) >= 5 and len(pairs) >= 5 * expected,
-        members=len(members),
-        staff=sum("names staff" in r.tells for r in members),
-        family=sum(1 for a, b, _ in pairs if surname(a) and surname(a) == surname(b)),
-        thin=sum(r.user_reviews <= 1 and not r.text for r in members),
+        observed=len(pairs), expected=round(expected, 1), pairs=sorted(pairs, key=lambda t: t[2]), flagged=flagged,
+        members=len(members), staff=staff, family=family, thin=sum(r.user_reviews <= 1 and not r.text for r in members),
     )
 
 
