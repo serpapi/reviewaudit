@@ -20,7 +20,7 @@
 {% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict"} %}
 
 <div class="hero {{ 'has-photo' if place.thumbnail }}">
-  {% if place.thumbnail %}<a class="photo" href="{{ place.photos_link or place.thumbnail }}" target="_blank" rel="noopener"><img src="{{ place.thumbnail }}" alt="" loading="lazy"></a>{% endif %}
+  {% if place.thumbnail %}<a class="photo" href="{{ place.photos_link or place.thumbnail }}" target="_blank" rel="noopener"><img src="{{ place.thumbnail | sized(400) }}" alt="" width="200" height="200"></a>{% endif %}
   <div class="about">
     <h1>{{ place.title }}</h1>
     <p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }}</p>
@@ -44,7 +44,7 @@
   </div>
   {% if map %}
   <a class="map" href="{{ map.link }}" target="_blank" rel="noopener" title="Open in Google Maps">
-    <div class="tiles" style="transform:translate({{ map.dx }}px,{{ map.dy }}px)">{% for x, y in map.tiles %}<img src="https://tile.openstreetmap.org/{{ map.zoom }}/{{ x }}/{{ y }}.png" alt="" loading="lazy">{% endfor %}</div>
+    <div class="tiles" style="transform:translate({{ map.dx }}px,{{ map.dy }}px)">{% for x, y in map.tiles %}<img src="https://tile.openstreetmap.org/{{ map.zoom }}/{{ x }}/{{ y }}.png" alt="" width="256" height="256">{% endfor %}</div>
     <span class="pin"></span>
     <span class="osm">© OpenStreetMap</span>
   </a>

@@ -1,6 +1,7 @@
 """One self-contained HTML page per place. Charts are inline SVG laid out here; the template only draws."""
 
 import math
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -15,6 +16,7 @@ env.filters["thousands"] = lambda n: f"{n:,}" if isinstance(n, (int, float)) els
 env.filters["pct"] = lambda x: f"{x:.0%}" if x is not None else "–"
 env.filters["day"] = lambda d: d.strftime("%-d %b %Y")
 env.filters["rating"] = lambda x: f"{x:.1f}" if isinstance(x, (int, float)) else x
+env.filters["sized"] = lambda url, px: re.sub(r"=w\d+-h\d+[^&]*$", f"=w{px}-h{px}-c", url) if url else url  # lh3 photo urls take their size as a suffix
 
 
 def timeline(reviews, suspects, windows, width=880, height=300, r=4):

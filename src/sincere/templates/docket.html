@@ -42,7 +42,7 @@ td.n { text-align:right; white-space:nowrap; }
   <tr><th></th><th>place</th><th>verdict</th><th>five-stars beyond baseline</th><th>Google</th><th>recent → without them</th></tr>
   {% for c in cases %}
   <tr>
-    <td class="p">{% if c.thumbnail %}<img src="{{ c.thumbnail }}" alt="" loading="lazy">{% endif %}</td>
+    <td class="p">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="" width="52" height="52" loading="lazy">{% endif %}</td>
     <td class="t"><a href="{{ c.report }}">{{ c.title }}</a><span>{{ c.type if c.type is string else (c.type or [''])[0] }}{{ ' · ' if c.type }}{{ c.where }}{{ ' · ' if c.where }}{{ c.read }} of {{ c.reviews | thousands }} reviews read</span></td>
     <td><span class="tier {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}</span></td>
     <td><span class="bar" style="width:{{ (c.padded * 160) | int }}px"></span>{{ '%.0f' | format(c.padded * 100) }}%</td>
