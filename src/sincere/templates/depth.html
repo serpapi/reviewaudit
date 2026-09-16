@@ -1,0 +1,21 @@
+<div class="bars">
+  {% for row in result.depth %}
+  <span class="lab">{{ row.label }} review{{ 's' if row.label != '1' }}</span>
+  <span class="track">
+    {% if row.share is not none %}
+    <span class="fill" style="width:{{ '%.1f' | format(row.share * 100) }}%"></span>
+    {% if result.base_share is not none and loop.index <= 2 and row.share > result.base_share %}
+    <span class="over" style="left:{{ '%.1f' | format(result.base_share * 100) }}%;width:{{ '%.1f' | format((row.share - result.base_share) * 100) }}%"></span>
+    {% endif %}
+    {% endif %}
+    {% if result.base_share is not none %}<span class="base" style="left:{{ '%.1f' | format(result.base_share * 100) }}%"></span>{% endif %}
+  </span>
+  <span class="val">{{ row.share | pct }}</span>
+  <span class="n">{{ row.n }} rev.</span>
+  {% endfor %}
+</div>
+<div class="legend">
+  <span><i class="star"></i>five-star share, by the account's lifetime review count</span>
+  {% if result.base_share is not none %}<span><i class="base"></i>accounts with 4 to 50 reviews: {{ result.base_share | pct }}</span>
+  {% if result.excess %}<span><i class="sus"></i>beyond that line: {{ result.excess }} extra five-star{{ 's' if result.excess != 1 }}</span>{% endif %}{% endif %}
+</div>

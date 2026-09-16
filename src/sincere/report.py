@@ -5,7 +5,8 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from .signals import TELLS, TRUST, bursts as _bursts  # noqa: F401  (TELLS/TRUST feed the method table)
+from .case import build
+from .signals import TELLS, TRUST
 
 env = Environment(loader=FileSystemLoader(Path(__file__).parent / "templates"), autoescape=True)
 env.filters["thousands"] = lambda n: f"{n:,}" if isinstance(n, (int, float)) else n
@@ -67,49 +68,19 @@ def stars_table(reviews, suspects):
     return [dict(stars=s, n=sum(r.rating == s for r in reviews), sus=sum(r.rating == s and r.id in ids for r in reviews), share=sum(r.rating == s for r in reviews) / total) for s in range(5, 0, -1)]
 
 
-def sentence(place, reviews, result):
-    v, fives = result["verdict"], [r for r in reviews if r.rating == 5]
-    k = sum(r.rating == 5 for r in result["suspects"])
-    d = result["depth"]
-    parts = []
-    if k:
-        parts.append(f"{k} of the {len(fives)} recent five-star reviews are more than this place's own reviewers explain.")
-    else:
-        parts.append(f"Nothing in the last {len(reviews)} reviews goes beyond what this place's own reviewers explain.")
-    if result["base_share"] is not None and d[0]["share"] is not None and d[0]["n"] >= 5:
-        base, first = result["base_share"], d[0]["share"]
-        if first - base >= 0.08:
-            parts.append(f"Accounts with a record give it five stars {base:.0%} of the time; accounts reviewing for the first time, {first:.0%}.")
-        else:
-            parts.append(f"First-time reviewers and accounts with a record give it five stars at the same rate ({first:.0%} and {base:.0%}).")
-    deep = d[-1]
-    if result["base_share"] is not None and deep["n"] >= 10 and result["base_share"] - deep["share"] >= 0.15:
-        parts.append(f"Its most seasoned reviewers, with 51 or more reviews, give it five stars {deep['share']:.0%} of the time.")
-    years = len({x.date.year for x in reviews}) > 1
-    for name, word in (("praise burst", "five"), ("attack burst", "one")):
-        ws = result["bursts"].get(name, [])
-        if ws:
-            when = lambda w: f"{w['n']} from {w['start']:%-d %b} to {w['end']:%-d %b}" + (f" {w['end']:%Y}" if years else "")
-            spans = ", ".join(when(w) for w in ws[:-1]) + (" and " if len(ws) > 1 else "") + when(ws[-1])
-            count = {1: "One week", 2: "Two weeks", 3: "Three weeks", 4: "Four weeks"}.get(len(ws), f"{len(ws)} weeks")
-            parts.append(f"{count} carried far more {word}-stars than usual: {spans}, against {ws[0]['expected']:g} in a normal week.")
-    if result["echoes"]:
-        n = sum(len(c) for c in result["echoes"])
-        parts.append(f"{n} reviews repeat each other's wording.")
-    if any("ring" in r.tells for r in reviews):
-        parts.append("A group of reviewers keeps turning up at the same other places.")
-    return " ".join(parts)
-
-
 def render(place, reviews, result, api):
     tpl = env.get_template("report.html")
     dates = sorted(r.date for r in reviews)
     checked = [r for r in reviews if r.history]
+    findings, ruled_out, nature = build(place, reviews, result, checked)
     return tpl.render(
         place=place,
         reviews=reviews,
         result=result,
-        sentence=sentence(place, reviews, result),
+        findings=findings,
+        ruled_out=ruled_out,
+        nature=nature,
+        embedded={f.get("exhibit") for f in findings},
         tl=timeline(reviews, result["suspects"], result["bursts"]),
         stars=stars_table(reviews, result["suspects"]),
         checked=checked,

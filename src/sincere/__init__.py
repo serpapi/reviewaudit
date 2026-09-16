@@ -35,11 +35,13 @@ def main():
     signals.account_tells(reviews)
     signals.burst_tells(reviews)
     signals.echo_tells(reviews)
+    signals.staff_names(reviews, place["title"], place.get("address", ""))
+    signals.close_pairs(reviews)
     todo = signals.lookup_candidates(reviews, args.lookups)
     histories = {r.user_id: api.contributor(r.user_id) for r in todo}
     print(f"looked up {len(histories)} reviewer histories")
 
-    result = signals.analyze(reviews, histories, place["data_id"], place["title"])
+    result = signals.analyze(reviews, histories, place["data_id"], place["title"], place.get("address", ""))
     v = result["verdict"]
     print(f"{v['tier']} · {v['padded']:.0%} of five-star reviews suspect · sample {result['sample_rating']} → {result['clean_rating']} without them")
     for t, n in result["tell_counts"].most_common():

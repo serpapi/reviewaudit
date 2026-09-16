@@ -3,6 +3,7 @@ tells that fired on it, discounted by the things that are expensive to fake."""
 
 import math
 import re
+import unicodedata
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -18,6 +19,8 @@ TELLS = {
     "only praises": (0.30, "the account's whole history is five stars"),
     "brand loyal": (0.35, "the account reviews other branches of the same brand"),
     "rating only": (0.20, "stars with no text: the cheapest review there is"),
+    "minutes apart": (0.40, "posted within ten minutes of another review of this place"),
+    "names staff": (0.15, "mentions a member of staff by name, the mark of a review asked for on the spot"),
 }
 # trust = how much a costly-to-fake trait discounts the suspicion
 TRUST = {
@@ -119,6 +122,57 @@ def burst_tells(reviews):
                 r.tells[name] = f"{b['n']} {'five' if rating == 5 else 'one'}-star reviews in {(b['end'] - b['start']).days + 1} days, {b['expected']} expected"
         out[name] = found
     return out
+
+
+ROLE_BEFORE = r"(?:waiter|waitress|server|host|hostess|manager|chef|barista|guide|captain|driver|doctor|dr|dentist|nurse|surgeon|assistant|coordinator|translator|interpreter|consultant|staff|garson|şef|doktor|hemşire|kaptan|rehber|tercüman|danışman|usta)\.?\s+(?:named\s+|called\s+|mr\.?\s+|ms\.?\s+)?"
+PRONOUNS = {"this", "that", "they", "she", "he", "we", "it", "there", "everything", "everyone", "everybody", "all", "our", "the", "food", "service", "staff", "place", "also", "and", "but", "very", "highly", "great", "overall", "nothing", "someone", "people", "team", "hotel", "restaurant", "clinic", "doctor", "dr"}
+HONORIFIC = r"\s+(?:bey|hanım|hanim|abi|abla|usta|hoca|chef|şef)[^\W\d_]*"  # Turkish suffixes: abimiz, beyin
+VERB = r"\s+(?:was|is|were|gave|took|served|helped|made|looked|explained|did|went|has|had|welcomed|treated)\b"
+
+
+def staff_names(reviews, place_title, place_address=""):
+    """People named in the text, validated by a role next to the name at least twice ("Dalyan bey", "our waiter Gökmen",
+    "Dr Asil", "Silvia was"). A named waiter, doctor or guide is the mark of a review asked for on the spot."""
+    fold = lambda t: unicodedata.normalize("NFKD", t.lower().replace("ı", "i")).encode("ascii", "ignore").decode()
+    skip = {fold(t) for t in re.findall(r"\w+", place_title + " " + place_address)} | PRONOUNS
+    name = r"([^\W\d_][^\W\d_]{2,})"
+    seen = Counter()
+    for r in reviews:
+        found = set(re.findall(ROLE_BEFORE + name, r.text, re.I)) | set(re.findall(name + HONORIFIC, r.text)) | set(re.findall(r"(?<=[a-zçğıöşü] )" + name + VERB, r.text))
+        seen.update(w for w in found if w[0].isupper() and fold(w) not in skip)
+    names = {w for w, n in seen.items() if n >= 2}
+    by_name = Counter()
+    for r in reviews:
+        hit = [w for w in names if re.search(rf"(?<![^\W\d_]){re.escape(w)}(?![^\W\d_])", r.text)]
+        if hit:
+            r.tells["names staff"] = ", ".join(sorted(hit))
+            by_name.update(hit)
+    return by_name
+
+
+def close_pairs(reviews, rating=5, minutes=10):
+    """Reviews of one rating posted within `minutes` of each other. Expected count is hour-of-day aware, so a lunch
+    place's 13:30 rush does not read as a batch upload."""
+    hits = sorted((r for r in reviews if r.rating == rating), key=lambda r: r.date)
+    if len(hits) < 5:
+        return dict(observed=0, expected=0.0, pairs=[], flagged=False)
+    days = len({r.date.date() for r in reviews})  # active days, so a few edited-years-ago reviews don't stretch the span
+    per_hour = Counter(r.date.hour for r in hits)
+    expected = sum(1 - math.exp(-minutes * per_hour[r.date.hour] / (days * 60)) for r in hits[:-1])
+    pairs = [(a, b, (b.date - a.date).total_seconds() / 60) for a, b in zip(hits, hits[1:]) if (b.date - a.date).total_seconds() <= minutes * 60]
+    for a, b, gap in pairs:
+        for r in (a, b):
+            r.tells["minutes apart"] = f"{gap:.0f} min from another five-star" if gap >= 1 else "under a minute from another five-star"
+    members = {r.id: r for a, b, _ in pairs for r in (a, b)}.values()
+    surname = lambda r: r.user_name.split()[-1].lower() if len(r.user_name.split()) > 1 else None
+    return dict(
+        observed=len(pairs), expected=round(expected, 1), pairs=sorted(pairs, key=lambda t: t[2]),
+        flagged=len(pairs) >= 5 and len(pairs) >= 5 * expected,
+        members=len(members),
+        staff=sum("names staff" in r.tells for r in members),
+        family=sum(1 for a, b, _ in pairs if surname(a) and surname(a) == surname(b)),
+        thin=sum(r.user_reviews <= 1 and not r.text for r in members),
+    )
 
 
 def _shingles(text, n=3):
@@ -233,10 +287,13 @@ def excess_praise(reviews, rows):
     return round(excess), base
 
 
-def pick_suspects(reviews, excess, bursts):
-    """Only what the place's own baseline cannot explain: the thin-account excess and each burst's excess, filled with
-    the most suspicious candidates, plus every echo and ring member. Account tells alone never condemn a review."""
+def pick_suspects(reviews, excess, bursts, close):
+    """Only what the place's own baseline cannot explain: the thin-account excess, each burst's excess and the
+    close-pair excess, filled with the most suspicious candidates, plus every echo and ring member. Account tells
+    alone never condemn a review."""
     chosen = {r.id for r in reviews if "echo" in r.tells or "ring" in r.tells}
+    if close["flagged"]:
+        chosen |= {r.id for a, b, _ in close["pairs"][: round(close["observed"] - close["expected"])] for r in (a, b)}
     thin = sorted((r for r in reviews if r.rating == 5 and r.user_reviews <= 3), key=lambda r: -r.score)
     chosen |= {r.id for r in thin[:excess]}
     for windows in bursts.values():
@@ -255,14 +312,16 @@ def verdict(reviews, suspects):
     return dict(padded=padded, attacked=attacked, tier=tier)
 
 
-def analyze(reviews, histories, place_data_id, place_title):
+def analyze(reviews, histories, place_data_id, place_title, place_address=""):
     account_tells(reviews)
     burst_windows = burst_tells(reviews)
     echoes = echo_tells(reviews)
+    staff = staff_names(reviews, place_title, place_address)
+    close = close_pairs(reviews)
     history_tells(reviews, histories, place_data_id, place_title)
     rows = depth_table(reviews)
     excess, base = excess_praise(reviews, rows)
-    suspects = pick_suspects(reviews, excess, burst_windows)
+    suspects = pick_suspects(reviews, excess, burst_windows, close)
     kept = [r for r in reviews if r not in suspects]
     mean = lambda rs: round(sum(r.rating for r in rs) / len(rs), 2) if rs else None
     return dict(
@@ -274,6 +333,8 @@ def analyze(reviews, histories, place_data_id, place_title):
         excess=excess,
         base_share=base,
         bursts=burst_windows,
+        close=close,
+        staff=staff,
         echoes=echoes,
         tell_counts=Counter(t for r in reviews for t in r.tells),
     )

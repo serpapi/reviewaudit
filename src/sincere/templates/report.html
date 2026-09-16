@@ -18,6 +18,7 @@
   --attack: #d03b3b; --attack-soft: #f8dcdc;
   --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
   --text: "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -49,36 +50,58 @@ main, header, footer { max-width: 880px; margin: 0 auto; padding: 0 20px; }
 header { display: flex; justify-content: space-between; align-items: baseline; padding-top: 28px; }
 .wordmark { font: 600 20px/1 var(--display); letter-spacing: -0.01em; }
 .meta { color: var(--muted); font-size: 14px; }
-section { margin-top: 72px; }
-h1 { font: 800 clamp(34px, 5.5vw, 48px)/1.04 var(--display); letter-spacing: -0.025em; margin: 56px 0 10px; text-wrap: balance; }
-h2 { font: 600 26px/1.15 var(--display); letter-spacing: -0.015em; margin: 0 0 6px; }
-h2 + p, .sub { color: var(--ink-2); margin: 0 0 26px; max-width: 62ch; }
+h1 { font: 800 clamp(30px, 5vw, 42px)/1.06 var(--display); letter-spacing: -0.025em; margin: 48px 0 8px; text-wrap: balance; }
 .where { color: var(--ink-2); margin: 0; }
-.where b { color: var(--ink); font-weight: 500; }
+h2 { font: 600 24px/1.15 var(--display); letter-spacing: -0.015em; margin: 72px 0 18px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* the record */
+.record { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.record b { display: block; font: 600 22px/1.1 var(--display); letter-spacing: -0.01em; }
+.record span { display: block; color: var(--ink-2); font-size: 13.5px; line-height: 1.35; margin-top: 4px; }
 
 /* verdict */
-.tier { font: 800 clamp(44px, 8.5vw, 84px)/0.98 var(--display); letter-spacing: -0.035em; margin: 0 0 22px; text-wrap: balance; }
-.tier.genuine { color: var(--ink); }
-.tier.padded { color: var(--sus); }
-.lede { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.4; max-width: 46ch; margin: 0; text-wrap: pretty; }
-.ratings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); }
-.ratings b { display: block; font: 600 clamp(40px, 6vw, 60px)/1 var(--display); letter-spacing: -0.03em; }
-.ratings b.sus { color: var(--sus); }
-.ratings span { display: block; color: var(--ink-2); font-size: 14px; line-height: 1.35; margin-top: 8px; max-width: 22ch; }
-.drift { margin: 22px 0 0; color: var(--ink-2); font-size: 15px; }
+.verdict { margin-top: 56px; }
+.tier { font: 800 clamp(44px, 8.5vw, 84px)/0.98 var(--display); letter-spacing: -0.035em; margin: 0 0 20px; }
+.tier.genuine { color: var(--ink); } .tier.padded { color: var(--sus); }
+.lede { font-size: clamp(18px, 2.3vw, 22px); line-height: 1.42; max-width: 50ch; margin: 0; text-wrap: pretty; }
+.lede b { color: var(--sus); font-weight: 600; }
+.ratings { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 28px; }
+.ratings div b { display: block; font: 600 34px/1 var(--display); letter-spacing: -0.02em; }
+.ratings div b.sus { color: var(--sus); }
+.ratings div span { display: block; color: var(--ink-2); font-size: 13.5px; margin-top: 6px; }
 
-/* bar tables (depth, stars) */
+/* findings */
+.finding { display: grid; grid-template-columns: 56px 1fr; gap: 0 16px; padding: 26px 0; border-top: 1px solid var(--line); }
+.finding:last-of-type { border-bottom: 1px solid var(--line); }
+.finding .no { font: 600 22px/1.2 var(--display); color: var(--muted); }
+.finding h3 { font: 600 20px/1.25 var(--display); letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance; }
+.strength { display: inline-block; vertical-align: 3px; margin-left: 10px; font: 500 12px/1.5 var(--text); letter-spacing: 0; color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 0 8px; }
+.strength.strong { color: var(--sus); border-color: var(--sus); }
+.finding p { margin: 0; max-width: 66ch; color: var(--ink); }
+.finding .exhibit { margin-top: 20px; }
+table.facts { border-collapse: collapse; margin-top: 16px; font-size: 14px; font-variant-numeric: tabular-nums; }
+table.facts th { text-align: left; font-weight: 500; color: var(--muted); padding: 0 22px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.facts td { padding: 6px 22px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.facts tr > :first-child { color: var(--ink-2); }
+
+/* ruled out */
+.ruled { list-style: none; margin: 0; padding: 0; max-width: 70ch; }
+.ruled li { position: relative; padding: 8px 0 8px 26px; color: var(--ink-2); }
+.ruled li::before { content: ""; position: absolute; left: 4px; top: 17px; width: 10px; height: 2px; background: var(--line-2); }
+
+/* bars */
 .bars { display: grid; grid-template-columns: max-content minmax(0, 1fr) 4ch 7ch; column-gap: 14px; row-gap: 9px; align-items: center; font-variant-numeric: tabular-nums; }
-.bars .lab { color: var(--ink-2); font-size: 15px; white-space: nowrap; }
-.bars .track { position: relative; height: 22px; background: transparent; }
+.bars .lab { color: var(--ink-2); font-size: 14.5px; white-space: nowrap; }
+.bars .track { position: relative; height: 20px; }
 .bars .fill { position: absolute; inset: 0 auto 0 0; background: var(--star); border-radius: 0 3px 3px 0; }
 .bars .over { position: absolute; top: 0; bottom: 0; background: var(--sus); border-radius: 0 3px 3px 0; }
 .bars .base { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 1.5px solid var(--ink); }
-.bars .val { font-weight: 600; min-width: 3ch; text-align: right; }
-.bars .n { color: var(--muted); font-size: 14px; min-width: 6ch; text-align: right; }
-.bars .stars { letter-spacing: 0.06em; color: var(--star); font-size: 15px; }
+.bars .val { font-weight: 600; min-width: 3ch; text-align: right; font-size: 15px; }
+.bars .n { color: var(--muted); font-size: 13.5px; text-align: right; }
+.bars .stars { letter-spacing: 0.06em; color: var(--star); font-size: 14px; }
 .bars .stars i { font-style: normal; color: var(--line-2); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 18px; color: var(--ink-2); font-size: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 14px; color: var(--ink-2); font-size: 13.5px; }
 .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 7px; }
 .legend i.star { background: var(--star); } .legend i.sus { background: var(--sus); }
 .legend i.base { width: 0; height: 12px; border-left: 1.5px solid var(--ink); border-radius: 0; }
@@ -91,7 +114,6 @@ h2 + p, .sub { color: var(--ink-2); margin: 0 0 26px; max-width: 62ch; }
 .tl .axis { fill: var(--muted); font: 12px var(--text); }
 .tl .rowlab { fill: var(--star); font: 13px var(--text); letter-spacing: 0.05em; }
 .tl .band { fill: var(--star-soft); } .tl .band.attack { fill: var(--attack-soft); }
-.tl .bandlab { fill: var(--ink-2); font: 12px var(--text); }
 .tl circle { fill: var(--star); stroke: var(--page); stroke-width: 1; cursor: pointer; transition: r .12s; }
 .tl circle.sus { fill: var(--sus); }
 .tl a:hover circle, .tl a:focus-visible circle { r: 7; }
@@ -99,26 +121,24 @@ h2 + p, .sub { color: var(--ink-2); margin: 0 0 26px; max-width: 62ch; }
 .tip { position: absolute; pointer-events: none; opacity: 0; background: var(--panel); color: var(--ink); border: 1px solid var(--line-2); border-radius: 6px; padding: 8px 11px; font-size: 13px; line-height: 1.4; max-width: 260px; box-shadow: 0 6px 24px rgba(0,0,0,.12); transform: translate(-50%, calc(-100% - 14px)); transition: opacity .1s; z-index: 2; }
 .tip.on { opacity: 1; }
 .tip b { font-weight: 600; } .tip .t { color: var(--sus); } .tip .s { color: var(--star); letter-spacing: .05em; }
+.caption { color: var(--ink-2); font-size: 14px; margin: 0 0 14px; max-width: 70ch; }
 
-/* ledger */
+/* exhibits */
+.exhibits > h3 { font: 600 17px/1.3 var(--display); margin: 40px 0 12px; }
+.exhibits > h3:first-of-type { margin-top: 0; }
 .ledger { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.ledger li { display: grid; grid-template-columns: 96px 1fr; gap: 6px 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
-.ledger .rate { color: var(--star); letter-spacing: 0.08em; font-size: 15px; line-height: 1.6; }
+.ledger li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 2px 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.ledger .rate { color: var(--star); letter-spacing: 0.06em; font-size: 13px; line-height: 1.5; }
 .ledger .rate i { font-style: normal; color: var(--line-2); }
-.ledger .rate small { display: block; color: var(--muted); font-size: 13px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
-.ledger .who { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.ledger .rate small { display: block; color: var(--muted); font-size: 12.5px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.ledger .who { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; }
 .ledger .who a { font-weight: 600; }
-.ledger .who span { color: var(--muted); font-size: 14px; }
-.ledger .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.chip { display: inline-block; background: var(--sus-soft); color: var(--sus); border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.ledger .who span { color: var(--muted); font-size: 13.5px; }
+.ledger .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.chip { display: inline-block; background: var(--sus-soft); color: var(--sus); border-radius: 999px; padding: 1px 9px; font-size: 12.5px; font-weight: 500; line-height: 1.5; }
 .chip.trust { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line-2); }
-.ledger .why { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
-.ledger q { display: block; margin-top: 6px; color: var(--ink); quotes: "“" "”"; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
-.ledger .hist { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
-.ledger .hist b { color: var(--ink); font-weight: 500; }
-.ledger .score { color: var(--muted); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
-
-/* echoes */
+.ledger q { display: block; margin-top: 4px; color: var(--ink-2); quotes: "“" "”"; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ledger .hist { color: var(--muted); font-size: 13px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .echo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px; }
 .echo blockquote { margin: 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
 .echo blockquote footer { margin-top: 8px; color: var(--muted); font-size: 13px; padding: 0; }
@@ -132,14 +152,17 @@ h2 + p, .sub { color: var(--ink-2); margin: 0 0 26px; max-width: 62ch; }
 .method td.w { color: var(--muted); text-align: right; padding-left: 12px; font-variant-numeric: tabular-nums; }
 .method p, .method li { color: var(--ink-2); font-size: 14px; margin: 0 0 8px; }
 .method ul { padding-left: 18px; margin: 0; }
-.method code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+code { font: 13px var(--mono); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
 footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 640px) {
-  .ratings { grid-template-columns: 1fr; gap: 26px; }
+  .record { grid-template-columns: 1fr 1fr; }
   .method { grid-template-columns: 1fr; }
+  .finding { grid-template-columns: 1fr; }
+  .finding .no { margin-bottom: 4px; }
   .ledger li { grid-template-columns: 1fr; }
-  .bars { column-gap: 10px; }
-  .bars .n { display: none; }
+  .ledger q, .ledger .hist { white-space: normal; }
+  .bars { column-gap: 10px; } .bars .n { display: none; }
+  table.facts { display: block; overflow-x: auto; }
 }
 @media (prefers-reduced-motion: reduce) { .tl circle, .tip { transition: none; } }
 </style>
@@ -147,85 +170,74 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
 <body>
 <header>
   <span class="wordmark">sincere</span>
-  <span class="meta">read on {{ generated }}</span>
+  <span class="meta">case read on {{ generated }}</span>
 </header>
 <main>
 {% set v = result.verdict %}
-{% set k = result.suspects | selectattr("rating", "equalto", 5) | list | length %}
 {% set fives = reviews | selectattr("rating", "equalto", 5) | list | length %}
+{% set k = result.suspects | selectattr("rating", "equalto", 5) | list | length %}
 
 <h1>{{ place.title }}</h1>
 <p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }}</p>
 
+<div class="record">
+  <div><b class="num">{{ place.rating }}</b><span>on Google, from {{ place.reviews | thousands }} reviews</span></div>
+  <div><b class="num">{{ reviews | length }}</b><span>newest reviews read, {{ first | day }} to {{ last | day }}</span></div>
+  <div><b class="num">{{ fives }}</b><span>of them five-star</span></div>
+  <div><b class="num">{{ checked | length }}</b><span>reviewer records pulled in full</span></div>
+</div>
+
 <section class="verdict">
   <p class="tier {{ 'genuine' if v.tier == 'looks genuine' else 'padded' }}">{{ v.tier | capitalize }}.</p>
-  <p class="lede">{{ sentence }}</p>
+  <p class="lede">
+    {% if result.suspects %}<b>{{ k }} of the {{ fives }}</b> recent five-star reviews {{ 'is' if k == 1 else 'are' }} beyond what this place's own reviewers explain{% if v.attacked %}, and {{ result.suspects | selectattr("rating", "equalto", 1) | list | length }} one-stars look like an attack{% endif %}. {% if result.clean_rating != result.sample_rating %}Without them the last {{ reviews | length }} rate <b>{{ result.clean_rating }}</b>, not {{ result.sample_rating }}.{% else %}Taking {{ 'it' if result.suspects | length == 1 else 'them' }} out does not move the rating.{% endif %} {{ nature }}
+    {% else %}Nothing in the last {{ reviews | length }} reviews goes beyond what this place's own reviewers explain. They rate {{ result.sample_rating }} and nothing needs taking out.{% endif %}
+  </p>
   <div class="ratings">
-    <div><b>{{ place.rating }}</b><span>on Google, from all {{ place.reviews | thousands }} reviews</span></div>
-    <div><b>{{ result.sample_rating }}</b><span>the {{ reviews | length }} most recent, read here</span></div>
-    <div><b class="{{ 'sus' if result.suspects }}">{{ result.clean_rating }}</b><span>{% if result.suspects %}the same {{ reviews | length }} without the {{ result.suspects | length }} that don't add up{% else %}the same {{ reviews | length }}: nothing to take out{% endif %}</span></div>
+    <div><b class="num">{{ place.rating }}</b><span>Google, all time</span></div>
+    <div><b class="num">{{ result.sample_rating }}</b><span>the last {{ reviews | length }}</span></div>
+    <div><b class="num {{ 'sus' if result.suspects }}">{{ result.clean_rating }}</b><span>the last {{ reviews | length }} without the {{ result.suspects | length }}</span></div>
   </div>
-  {% set drift = result.sample_rating - place.rating %}
-  {% if drift | abs >= 0.3 %}
-  <p class="drift">Recent reviews run {{ '%.1f' | format(drift | abs) }} stars {{ 'above' if drift > 0 else 'below' }} the lifetime rating{% if drift > 0 %}: either the place got better, or the praise did{% endif %}.</p>
+</section>
+
+<h2>Findings</h2>
+{% for f in findings %}
+<article class="finding" id="{{ f.id }}">
+  <div class="no num">{{ loop.index }}</div>
+  <div>
+    <h3>{{ f.title }}<span class="strength {{ f.strength }}">{{ f.strength }}</span></h3>
+    <p>{{ f.claim }}</p>
+    {% if f.table %}
+    <table class="facts">
+      <tr>{% for h in f.table.head %}<th>{{ h }}</th>{% endfor %}</tr>
+      {% for row in f.table.rows %}<tr>{% for c in row %}<td>{{ c }}</td>{% endfor %}</tr>{% endfor %}
+    </table>
+    {% endif %}
+    {% if f.exhibit == "depth" %}<div class="exhibit">{% include "depth.html" %}</div>{% endif %}
+    {% if f.exhibit == "timeline" %}<div class="exhibit">{% include "timeline.html" %}</div>{% endif %}
+    {% if f.exhibit == "echoes" %}<div class="exhibit">{% include "echoes.html" %}</div>{% endif %}
+  </div>
+</article>
+{% else %}
+<p class="caption">Nothing rose to a finding.</p>
+{% endfor %}
+
+<h2>Ruled out</h2>
+<ul class="ruled">
+  {% for line in ruled_out %}<li>{{ line }}</li>{% endfor %}
+</ul>
+
+<h2>Exhibits</h2>
+<div class="exhibits">
+  {% if "timeline" not in embedded %}
+  <h3>Every review read, by date and rating</h3>
+  {% include "timeline.html" %}
   {% endif %}
-</section>
-
-<section>
-  <h2>Who gives the five stars</h2>
-  <p>Five-star share of the last {{ reviews | length }} reviews, by how much the account has reviewed in its life. A place that earns its stars gets them evenly; a place that buys them gets them from accounts that have never reviewed anything else.</p>
-  <div class="bars">
-    {% for row in result.depth %}
-    <span class="lab">{{ row.label }} review{{ 's' if row.label != '1' }}</span>
-    <span class="track">
-      {% if row.share is not none %}
-      <span class="fill" style="width:{{ '%.1f' | format(row.share * 100) }}%"></span>
-      {% if result.base_share is not none and loop.index <= 2 and row.share > result.base_share %}
-      <span class="over" style="left:{{ '%.1f' | format(result.base_share * 100) }}%;width:{{ '%.1f' | format((row.share - result.base_share) * 100) }}%"></span>
-      {% endif %}
-      {% endif %}
-      {% if result.base_share is not none %}<span class="base" style="left:{{ '%.1f' | format(result.base_share * 100) }}%"></span>{% endif %}
-    </span>
-    <span class="val">{{ row.share | pct }}</span>
-    <span class="n">{{ row.n }} rev.</span>
-    {% endfor %}
-  </div>
-  <div class="legend">
-    <span><i class="star"></i>five-star share</span>
-    {% if result.base_share is not none %}<span><i class="base"></i>accounts with 4 to 50 reviews: {{ result.base_share | pct }}</span>
-    <span><i class="sus"></i>beyond that line: {{ result.excess }} extra five-star{{ 's' if result.excess != 1 }}</span>{% endif %}
-  </div>
-</section>
-
-<section>
-  <h2>When they arrived</h2>
-  <p>Each dot is one review, {{ tl.lo | day }} to {{ tl.hi | day }}. Violet dots are the ones that don't add up. A shaded band is a week where one rating arrived far faster than this place's usual pace.</p>
-  <div class="tl">
-    <svg viewBox="0 0 {{ tl.width }} {{ tl.height }}" role="img" aria-label="Reviews over time by rating">
-      {% for b in tl.bands %}<rect class="band {{ 'attack' if b.attack }}" x="{{ b.x }}" y="{{ tl.top - 4 }}" width="{{ b.w }}" height="{{ tl.plot_h + 8 }}" rx="4"><title>{{ b.label }}</title></rect>{% endfor %}
-      {% for r in tl.rows %}
-      <line class="grid" x1="{{ tl.left }}" x2="{{ tl.width - tl.right }}" y1="{{ r.y }}" y2="{{ r.y }}"/>
-      <text class="rowlab" x="{{ tl.left - 12 }}" y="{{ r.y + 4 }}" text-anchor="end">{{ '★' * r.label }}</text>
-      {% endfor %}
-      {% for t in tl.ticks %}
-      <line class="grid" x1="{{ t.x }}" x2="{{ t.x }}" y1="{{ tl.top - 6 }}" y2="{{ tl.height - tl.bottom + 6 }}"/>
-      <text class="axis" x="{{ t.x }}" y="{{ tl.height - 8 }}" text-anchor="{{ 'start' if loop.first else 'middle' }}">{{ t.label }}</text>
-      {% endfor %}
-      {% if tl.earlier %}<text class="earlier" x="{{ tl.left }}" y="{{ tl.top - 16 }}">‹ {{ tl.earlier | length }} older, edited recently</text>{% endif %}
-      {% for p in tl.points %}
-      <a href="{{ p.link }}" target="_blank" rel="noopener" data-name="{{ p.name }}" data-date="{{ p.date }}" data-rating="{{ p.rating }}" data-tells="{{ p.tells }}" data-score="{{ p.score }}">
-        <circle class="{{ 'sus' if p.suspect }}" cx="{{ p.x }}" cy="{{ p.y }}" r="{{ tl.r }}"/>
-      </a>
-      {% endfor %}
-    </svg>
-    <div class="tip" role="tooltip"></div>
-  </div>
-  {% if tl.bands %}<div class="legend">{% for b in tl.bands %}<span><i class="{{ 'aband' if b.attack else 'band' }}"></i>{{ b.label }}</span>{% endfor %}</div>{% endif %}
-</section>
-
-<section>
-  <h2>Where the doubt sits</h2>
-  <p>The last {{ reviews | length }} by rating. The violet part of each bar is what this report takes out.</p>
+  {% if "depth" not in embedded %}
+  <h3>Five-star share by the reviewer's record</h3>
+  {% include "depth.html" %}
+  {% endif %}
+  <h3>The last {{ reviews | length }} by rating, and what was taken out</h3>
   <div class="bars">
     {% for s in stars %}
     <span class="stars">{{ '★' * s.stars }}<i>{{ '★' * (5 - s.stars) }}</i></span>
@@ -237,12 +249,13 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
     <span class="n">{% if s.sus %}{{ s.sus }} out{% endif %}</span>
     {% endfor %}
   </div>
-</section>
-
-{% if result.suspects %}
-<section>
-  <h2>The {{ result.suspects | length }} that don't add up</h2>
-  <p>Most suspicious first. Every review here is linked, so the call is yours.</p>
+  {% if "echoes" not in embedded and result.echoes %}
+  <h3>Reviews that repeat each other</h3>
+  {% include "echoes.html" %}
+  {% endif %}
+  {% if result.suspects %}
+  <h3>The {{ result.suspects | length }} reviews taken out, most suspicious first</h3>
+  <p class="caption">Each links to the review on Google. Violet tags are tells; outlined tags are what earns trust back.</p>
   <ol class="ledger">
     {% for r in result.suspects %}
     <li>
@@ -253,66 +266,46 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
           <span>{% if r.history and r.history.n > r.user_reviews %}{{ r.history.n }} reviews and ratings{% elif r.user_reviews <= 1 %}their only review{% else %}{{ r.user_reviews }} reviews in total{% endif %}{% if r.local_guide %} · Local Guide{% endif %}{% if r.photos %} · {{ r.photos }} photo{{ 's' if r.photos != 1 }}{% endif %}</span>
         </div>
         <div class="chips">
-          {% for t in r.tells %}<span class="chip">{{ t }}</span>{% endfor %}
+          {% for t, why in r.tells.items() %}<span class="chip" title="{{ why }}">{{ t }}{% if t in ("praise burst", "attack burst", "minutes apart", "ring", "only praises", "brand loyal", "echo", "names staff") %}: {{ why }}{% endif %}</span>{% endfor %}
           {% for t in r.trust %}<span class="chip trust">{{ t }}</span>{% endfor %}
         </div>
-        {% set why = r.tells.values() | reject("in", ["their only review", "no text"]) | list %}
-        {% if why %}<div class="why">{{ why | join(" · ") }}</div>{% endif %}
-        {% if r.text %}<q>{{ r.text }}</q>{% endif %}
+        {% if r.text %}<q title="{{ r.text }}">{{ r.text }}</q>{% endif %}
         {% if r.history %}
-        <div class="hist"><b>Everything they have reviewed:</b>
-          {% for s in (5, 4, 3, 2, 1) if r.history.ratings[s] %}{{ r.history.ratings[s] }}×{{ s }}★{{ ', ' if not loop.last }}{% endfor %}{% if r.history.places %} · {{ r.history.places[:6] | join(", ") }}{% if r.history.places | length > 6 %}, +{{ r.history.places | length - 6 }} more{% endif %}{% else %} · nothing but this place{% endif %}
-        </div>
+        <div class="hist">Record: {% for s in (5, 4, 3, 2, 1) if r.history.ratings[s] %}{{ r.history.ratings[s] }}×{{ s }}★{{ ', ' if not loop.last }}{% endfor %}{% if r.history.places %} · {{ r.history.places[:8] | join(", ") }}{% if r.history.places | length > 8 %}, +{{ r.history.places | length - 8 }} more{% endif %}{% else %} · nothing but this place{% endif %}</div>
         {% endif %}
       </div>
     </li>
     {% endfor %}
   </ol>
-</section>
-{% endif %}
+  {% endif %}
+</div>
 
-{% if result.echoes %}
-<section>
-  <h2>Saying the same thing</h2>
-  <p>Reviews whose wording overlaps by half or more.</p>
-  {% for cluster in result.echoes %}
-  <div class="echo">
-    {% for r in cluster %}
-    <blockquote>{{ r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }}</footer></blockquote>
-    {% endfor %}
+<h2>Method</h2>
+<p class="caption">{{ calls }} SerpApi calls: one <code>google_maps</code> search for the place, {{ (reviews | length / 20) | round(0, 'ceil') | int }} pages of <code>google_maps_reviews</code> newest first, and <code>google_maps_contributor_reviews</code> for the {{ checked | length }} accounts worth a closer look. Nothing scraped by hand; nothing kept beyond the responses.</p>
+<div class="method">
+  <div>
+    <h3>The tells, and how much each one weighs</h3>
+    <table>
+      {% for name, (w, desc) in tells.items() %}<tr><td>{{ name }}</td><td>{{ desc }}</td><td class="w">{{ w }}</td></tr>{% endfor %}
+    </table>
+    <h3 style="margin-top:20px">What earns trust back</h3>
+    <table>
+      {% for name, w in trust.items() %}<tr><td>{{ name }}</td><td class="w">−{{ w }}</td></tr>{% endfor %}
+    </table>
   </div>
-  {% endfor %}
-</section>
-{% endif %}
-
-<section>
-  <h2>How this was read</h2>
-  <p>{{ calls }} SerpApi calls: one <code>google_maps</code> search for the place, {{ (reviews | length / 20) | round(0, 'ceil') | int }} pages of <code>google_maps_reviews</code> newest first, and <code>google_maps_contributor_reviews</code> for {{ checked | length }} accounts worth a closer look. Nothing was scraped by hand; nothing is stored beyond the responses.</p>
-  <div class="method">
-    <div>
-      <h3>The tells, and how much each one weighs</h3>
-      <table>
-        {% for name, (w, desc) in tells.items() %}<tr><td>{{ name }}</td><td>{{ desc }}</td><td class="w">{{ w }}</td></tr>{% endfor %}
-      </table>
-      <h3 style="margin-top:20px">What earns trust back</h3>
-      <table>
-        {% for name, w in trust.items() %}<tr><td>{{ name }}</td><td class="w">−{{ w }}</td></tr>{% endfor %}
-      </table>
-    </div>
-    <div>
-      <h3>What the numbers mean</h3>
-      <p>A review's suspicion is the chance at least one of its tells is a true signal (they combine as noisy-OR), discounted by the traits that cost real effort to fake. The score ranks; it never convicts on its own.</p>
-      <p>What gets taken out is only what the place's own reviewers cannot explain: the five-stars from thin accounts beyond the rate established accounts give, the reviews in a burst beyond that week's expected count, and every member of an echo or a ring. Bursts are judged against the sample's median week (Poisson tail below 0.001, at least 2.5× the median).</p>
-      <h3>Where this is blind</h3>
-      <ul>
-        <li>A place where everyone gives five stars looks the same whether they mean it or not. The gradient is the evidence; a flat 95% is not.</li>
-        <li>A first review at a famous place is normal. That is why a thin account alone never counts, only the excess does.</li>
-        <li>Two accounts that share other places are usually a couple. Rings need three.</li>
-        <li>"Newest first" still surfaces old reviews edited recently; they are shown but kept out of the axis.</li>
-      </ul>
-    </div>
+  <div>
+    <h3>What the numbers mean</h3>
+    <p>A review's suspicion is the chance at least one of its tells is a true signal (they combine as noisy-OR), discounted by the traits that cost real effort to fake. The score ranks; it never convicts on its own.</p>
+    <p>What gets taken out is only what the place's own reviewers cannot explain: the five-stars from thin accounts beyond the rate accounts with 4 to 50 reviews give, the reviews in a burst beyond that week's expected count, the pairs posted minutes apart beyond what the hours people post here predict, and every member of an echo or a ring. Bursts are judged against the sample's median week (Poisson tail below 0.001, at least 2.5× the median).</p>
+    <h3>Where this is blind</h3>
+    <ul>
+      <li>A place where everyone gives five stars looks the same whether they mean it or not. The gradient is the evidence; a flat 95% is not.</li>
+      <li>A first review at a famous place is normal. That is why a thin account alone never counts, only the excess does.</li>
+      <li>Two accounts that share other places are usually a couple. Rings need three.</li>
+      <li>"Newest first" still surfaces old reviews edited recently; they are shown but kept off the axis.</li>
+    </ul>
   </div>
-</section>
+</div>
 </main>
 <footer class="end">
   <span>sincere reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>.</span>
@@ -321,6 +314,7 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
 <script>
 (() => {
   const tip = document.querySelector('.tip'), box = document.querySelector('.tl');
+  if (!tip || !box) return;
   const show = a => {
     const d = a.dataset;
     tip.innerHTML = `<b>${d.name}</b> · ${d.date}<br><span class="s">${'★'.repeat(d.rating)}</span>${d.tells ? `<br><span class="t">${d.tells}</span>` : ''}`;

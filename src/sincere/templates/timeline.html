@@ -1,0 +1,25 @@
+<div class="tl">
+  <svg viewBox="0 0 {{ tl.width }} {{ tl.height }}" role="img" aria-label="Reviews over time by rating">
+    {% for b in tl.bands %}<rect class="band {{ 'attack' if b.attack }}" x="{{ b.x }}" y="{{ tl.top - 4 }}" width="{{ b.w }}" height="{{ tl.plot_h + 8 }}" rx="4"><title>{{ b.label }}</title></rect>{% endfor %}
+    {% for r in tl.rows %}
+    <line class="grid" x1="{{ tl.left }}" x2="{{ tl.width - tl.right }}" y1="{{ r.y }}" y2="{{ r.y }}"/>
+    <text class="rowlab" x="{{ tl.left - 12 }}" y="{{ r.y + 4 }}" text-anchor="end">{{ '★' * r.label }}</text>
+    {% endfor %}
+    {% for t in tl.ticks %}
+    <line class="grid" x1="{{ t.x }}" x2="{{ t.x }}" y1="{{ tl.top - 6 }}" y2="{{ tl.height - tl.bottom + 6 }}"/>
+    <text class="axis" x="{{ t.x }}" y="{{ tl.height - 8 }}" text-anchor="{{ 'start' if loop.first else 'middle' }}">{{ t.label }}</text>
+    {% endfor %}
+    {% if tl.earlier %}<text class="earlier" x="{{ tl.left }}" y="{{ tl.top - 16 }}">‹ {{ tl.earlier | length }} older, edited recently</text>{% endif %}
+    {% for p in tl.points %}
+    <a href="{{ p.link }}" target="_blank" rel="noopener" data-name="{{ p.name }}" data-date="{{ p.date }}" data-rating="{{ p.rating }}" data-tells="{{ p.tells }}">
+      <circle class="{{ 'sus' if p.suspect }}" cx="{{ p.x }}" cy="{{ p.y }}" r="{{ tl.r }}"/>
+    </a>
+    {% endfor %}
+  </svg>
+  <div class="tip" role="tooltip"></div>
+</div>
+<div class="legend">
+  <span><i class="star"></i>one review, {{ tl.lo | day }} to {{ tl.hi | day }}</span>
+  <span><i class="sus"></i>taken out</span>
+  {% for b in tl.bands %}<span><i class="{{ 'aband' if b.attack else 'band' }}"></i>{{ b.label }}</span>{% endfor %}
+</div>

@@ -1,0 +1,7 @@
+{% for cluster in result.echoes %}
+<div class="echo">
+  {% for r in cluster %}
+  <blockquote>{{ r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }}</footer></blockquote>
+  {% endfor %}
+</div>
+{% endfor %}
