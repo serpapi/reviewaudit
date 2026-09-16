@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ place.title }} · sincere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f4f4f1; --panel: #ffffff;
+  --ink: #191917; --ink-2: #55544f; --muted: #8b8a83;
+  --line: #e3e2dc; --line-2: #c9c8c1;
+  --star: #d99a00; --star-soft: #f7e6b8;
+  --sus: #6b46d9; --sus-soft: #e7e0fb;
+  --attack: #d03b3b; --attack-soft: #f8dcdc;
+  --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+  --text: "Instrument Sans", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #141416; --panel: #1d1d20;
+    --ink: #f2f2ee; --ink-2: #bdbcb4; --muted: #8b8a83;
+    --line: #2b2b2e; --line-2: #3d3d42;
+    --star: #b5830f; --star-soft: #3a2f10;
+    --sus: #8a72e6; --sus-soft: #2b2447;
+    --attack: #e05c5c; --attack-soft: #4a2020;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #141416; --panel: #1d1d20;
+  --ink: #f2f2ee; --ink-2: #bdbcb4; --muted: #8b8a83;
+  --line: #2b2b2e; --line-2: #3d3d42;
+  --star: #b5830f; --star-soft: #3a2f10;
+  --sus: #8a72e6; --sus-soft: #2b2447;
+  --attack: #e05c5c; --attack-soft: #4a2020;
+}
+* { box-sizing: border-box; }
+html { background: var(--page); }
+body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.55 var(--text); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--ink); }
+:focus-visible { outline: 2px solid var(--sus); outline-offset: 3px; border-radius: 2px; }
+main, header, footer { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+header { display: flex; justify-content: space-between; align-items: baseline; padding-top: 28px; }
+.wordmark { font: 600 20px/1 var(--display); letter-spacing: -0.01em; }
+.meta { color: var(--muted); font-size: 14px; }
+section { margin-top: 72px; }
+h1 { font: 800 clamp(34px, 5.5vw, 48px)/1.04 var(--display); letter-spacing: -0.025em; margin: 56px 0 10px; text-wrap: balance; }
+h2 { font: 600 26px/1.15 var(--display); letter-spacing: -0.015em; margin: 0 0 6px; }
+h2 + p, .sub { color: var(--ink-2); margin: 0 0 26px; max-width: 62ch; }
+.where { color: var(--ink-2); margin: 0; }
+.where b { color: var(--ink); font-weight: 500; }
+
+/* verdict */
+.tier { font: 800 clamp(44px, 8.5vw, 84px)/0.98 var(--display); letter-spacing: -0.035em; margin: 0 0 22px; text-wrap: balance; }
+.tier.genuine { color: var(--ink); }
+.tier.padded { color: var(--sus); }
+.lede { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.4; max-width: 46ch; margin: 0; text-wrap: pretty; }
+.ratings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); }
+.ratings b { display: block; font: 600 clamp(40px, 6vw, 60px)/1 var(--display); letter-spacing: -0.03em; }
+.ratings b.sus { color: var(--sus); }
+.ratings span { display: block; color: var(--ink-2); font-size: 14px; line-height: 1.35; margin-top: 8px; max-width: 22ch; }
+.drift { margin: 22px 0 0; color: var(--ink-2); font-size: 15px; }
+
+/* bar tables (depth, stars) */
+.bars { display: grid; grid-template-columns: max-content minmax(0, 1fr) 4ch 7ch; column-gap: 14px; row-gap: 9px; align-items: center; font-variant-numeric: tabular-nums; }
+.bars .lab { color: var(--ink-2); font-size: 15px; white-space: nowrap; }
+.bars .track { position: relative; height: 22px; background: transparent; }
+.bars .fill { position: absolute; inset: 0 auto 0 0; background: var(--star); border-radius: 0 3px 3px 0; }
+.bars .over { position: absolute; top: 0; bottom: 0; background: var(--sus); border-radius: 0 3px 3px 0; }
+.bars .base { position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 1.5px solid var(--ink); }
+.bars .val { font-weight: 600; min-width: 3ch; text-align: right; }
+.bars .n { color: var(--muted); font-size: 14px; min-width: 6ch; text-align: right; }
+.bars .stars { letter-spacing: 0.06em; color: var(--star); font-size: 15px; }
+.bars .stars i { font-style: normal; color: var(--line-2); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 18px; color: var(--ink-2); font-size: 14px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 7px; }
+.legend i.star { background: var(--star); } .legend i.sus { background: var(--sus); }
+.legend i.base { width: 0; height: 12px; border-left: 1.5px solid var(--ink); border-radius: 0; }
+.legend i.band { background: var(--star-soft); } .legend i.aband { background: var(--attack-soft); }
+
+/* timeline */
+.tl { position: relative; }
+.tl svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tl .grid { stroke: var(--line); stroke-width: 1; }
+.tl .axis { fill: var(--muted); font: 12px var(--text); }
+.tl .rowlab { fill: var(--star); font: 13px var(--text); letter-spacing: 0.05em; }
+.tl .band { fill: var(--star-soft); } .tl .band.attack { fill: var(--attack-soft); }
+.tl .bandlab { fill: var(--ink-2); font: 12px var(--text); }
+.tl circle { fill: var(--star); stroke: var(--page); stroke-width: 1; cursor: pointer; transition: r .12s; }
+.tl circle.sus { fill: var(--sus); }
+.tl a:hover circle, .tl a:focus-visible circle { r: 7; }
+.tl .earlier { fill: var(--muted); font: 12px var(--text); }
+.tip { position: absolute; pointer-events: none; opacity: 0; background: var(--panel); color: var(--ink); border: 1px solid var(--line-2); border-radius: 6px; padding: 8px 11px; font-size: 13px; line-height: 1.4; max-width: 260px; box-shadow: 0 6px 24px rgba(0,0,0,.12); transform: translate(-50%, calc(-100% - 14px)); transition: opacity .1s; z-index: 2; }
+.tip.on { opacity: 1; }
+.tip b { font-weight: 600; } .tip .t { color: var(--sus); } .tip .s { color: var(--star); letter-spacing: .05em; }
+
+/* ledger */
+.ledger { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.ledger li { display: grid; grid-template-columns: 96px 1fr; gap: 6px 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.ledger .rate { color: var(--star); letter-spacing: 0.08em; font-size: 15px; line-height: 1.6; }
+.ledger .rate i { font-style: normal; color: var(--line-2); }
+.ledger .rate small { display: block; color: var(--muted); font-size: 13px; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.ledger .who { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.ledger .who a { font-weight: 600; }
+.ledger .who span { color: var(--muted); font-size: 14px; }
+.ledger .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { display: inline-block; background: var(--sus-soft); color: var(--sus); border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 500; line-height: 1.5; }
+.chip.trust { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line-2); }
+.ledger .why { color: var(--ink-2); font-size: 14px; margin-top: 2px; }
+.ledger q { display: block; margin-top: 6px; color: var(--ink); quotes: "“" "”"; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.ledger .hist { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+.ledger .hist b { color: var(--ink); font-weight: 500; }
+.ledger .score { color: var(--muted); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* echoes */
+.echo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.echo blockquote { margin: 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
+.echo blockquote footer { margin-top: 8px; color: var(--muted); font-size: 13px; padding: 0; }
+
+/* method */
+.method { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+.method h3 { font: 600 16px/1.3 var(--text); margin: 0 0 8px; }
+.method table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.method td { padding: 5px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.method td:first-child { white-space: nowrap; padding-right: 14px; font-weight: 500; }
+.method td.w { color: var(--muted); text-align: right; padding-left: 12px; font-variant-numeric: tabular-nums; }
+.method p, .method li { color: var(--ink-2); font-size: 14px; margin: 0 0 8px; }
+.method ul { padding-left: 18px; margin: 0; }
+.method code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 640px) {
+  .ratings { grid-template-columns: 1fr; gap: 26px; }
+  .method { grid-template-columns: 1fr; }
+  .ledger li { grid-template-columns: 1fr; }
+  .bars { column-gap: 10px; }
+  .bars .n { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .tl circle, .tip { transition: none; } }
+</style>
+</head>
+<body>
+<header>
+  <span class="wordmark">sincere</span>
+  <span class="meta">read on {{ generated }}</span>
+</header>
+<main>
+{% set v = result.verdict %}
+{% set k = result.suspects | selectattr("rating", "equalto", 5) | list | length %}
+{% set fives = reviews | selectattr("rating", "equalto", 5) | list | length %}
+
+<h1>{{ place.title }}</h1>
+<p class="where">{% if place.type %}{{ place.type if place.type is string else place.type[0] }} · {% endif %}{{ place.address }}</p>
+
+<section class="verdict">
+  <p class="tier {{ 'genuine' if v.tier == 'looks genuine' else 'padded' }}">{{ v.tier | capitalize }}.</p>
+  <p class="lede">{{ sentence }}</p>
+  <div class="ratings">
+    <div><b>{{ place.rating }}</b><span>on Google, from all {{ place.reviews | thousands }} reviews</span></div>
+    <div><b>{{ result.sample_rating }}</b><span>the {{ reviews | length }} most recent, read here</span></div>
+    <div><b class="{{ 'sus' if result.suspects }}">{{ result.clean_rating }}</b><span>{% if result.suspects %}the same {{ reviews | length }} without the {{ result.suspects | length }} that don't add up{% else %}the same {{ reviews | length }}: nothing to take out{% endif %}</span></div>
+  </div>
+  {% set drift = result.sample_rating - place.rating %}
+  {% if drift | abs >= 0.3 %}
+  <p class="drift">Recent reviews run {{ '%.1f' | format(drift | abs) }} stars {{ 'above' if drift > 0 else 'below' }} the lifetime rating{% if drift > 0 %}: either the place got better, or the praise did{% endif %}.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Who gives the five stars</h2>
+  <p>Five-star share of the last {{ reviews | length }} reviews, by how much the account has reviewed in its life. A place that earns its stars gets them evenly; a place that buys them gets them from accounts that have never reviewed anything else.</p>
+  <div class="bars">
+    {% for row in result.depth %}
+    <span class="lab">{{ row.label }} review{{ 's' if row.label != '1' }}</span>
+    <span class="track">
+      {% if row.share is not none %}
+      <span class="fill" style="width:{{ '%.1f' | format(row.share * 100) }}%"></span>
+      {% if result.base_share is not none and loop.index <= 2 and row.share > result.base_share %}
+      <span class="over" style="left:{{ '%.1f' | format(result.base_share * 100) }}%;width:{{ '%.1f' | format((row.share - result.base_share) * 100) }}%"></span>
+      {% endif %}
+      {% endif %}
+      {% if result.base_share is not none %}<span class="base" style="left:{{ '%.1f' | format(result.base_share * 100) }}%"></span>{% endif %}
+    </span>
+    <span class="val">{{ row.share | pct }}</span>
+    <span class="n">{{ row.n }} rev.</span>
+    {% endfor %}
+  </div>
+  <div class="legend">
+    <span><i class="star"></i>five-star share</span>
+    {% if result.base_share is not none %}<span><i class="base"></i>accounts with 4 to 50 reviews: {{ result.base_share | pct }}</span>
+    <span><i class="sus"></i>beyond that line: {{ result.excess }} extra five-star{{ 's' if result.excess != 1 }}</span>{% endif %}
+  </div>
+</section>
+
+<section>
+  <h2>When they arrived</h2>
+  <p>Each dot is one review, {{ tl.lo | day }} to {{ tl.hi | day }}. Violet dots are the ones that don't add up. A shaded band is a week where one rating arrived far faster than this place's usual pace.</p>
+  <div class="tl">
+    <svg viewBox="0 0 {{ tl.width }} {{ tl.height }}" role="img" aria-label="Reviews over time by rating">
+      {% for b in tl.bands %}<rect class="band {{ 'attack' if b.attack }}" x="{{ b.x }}" y="{{ tl.top - 4 }}" width="{{ b.w }}" height="{{ tl.plot_h + 8 }}" rx="4"><title>{{ b.label }}</title></rect>{% endfor %}
+      {% for r in tl.rows %}
+      <line class="grid" x1="{{ tl.left }}" x2="{{ tl.width - tl.right }}" y1="{{ r.y }}" y2="{{ r.y }}"/>
+      <text class="rowlab" x="{{ tl.left - 12 }}" y="{{ r.y + 4 }}" text-anchor="end">{{ '★' * r.label }}</text>
+      {% endfor %}
+      {% for t in tl.ticks %}
+      <line class="grid" x1="{{ t.x }}" x2="{{ t.x }}" y1="{{ tl.top - 6 }}" y2="{{ tl.height - tl.bottom + 6 }}"/>
+      <text class="axis" x="{{ t.x }}" y="{{ tl.height - 8 }}" text-anchor="{{ 'start' if loop.first else 'middle' }}">{{ t.label }}</text>
+      {% endfor %}
+      {% if tl.earlier %}<text class="earlier" x="{{ tl.left }}" y="{{ tl.top - 16 }}">‹ {{ tl.earlier | length }} older, edited recently</text>{% endif %}
+      {% for p in tl.points %}
+      <a href="{{ p.link }}" target="_blank" rel="noopener" data-name="{{ p.name }}" data-date="{{ p.date }}" data-rating="{{ p.rating }}" data-tells="{{ p.tells }}" data-score="{{ p.score }}">
+        <circle class="{{ 'sus' if p.suspect }}" cx="{{ p.x }}" cy="{{ p.y }}" r="{{ tl.r }}"/>
+      </a>
+      {% endfor %}
+    </svg>
+    <div class="tip" role="tooltip"></div>
+  </div>
+  {% if tl.bands %}<div class="legend">{% for b in tl.bands %}<span><i class="{{ 'aband' if b.attack else 'band' }}"></i>{{ b.label }}</span>{% endfor %}</div>{% endif %}
+</section>
+
+<section>
+  <h2>Where the doubt sits</h2>
+  <p>The last {{ reviews | length }} by rating. The violet part of each bar is what this report takes out.</p>
+  <div class="bars">
+    {% for s in stars %}
+    <span class="stars">{{ '★' * s.stars }}<i>{{ '★' * (5 - s.stars) }}</i></span>
+    <span class="track">
+      <span class="fill" style="width:{{ '%.1f' | format(s.share * 100) }}%"></span>
+      {% if s.sus %}<span class="over" style="left:{{ '%.1f' | format((s.n - s.sus) / (reviews | length) * 100) }}%;width:{{ '%.1f' | format(s.sus / (reviews | length) * 100) }}%"></span>{% endif %}
+    </span>
+    <span class="val">{{ s.n }}</span>
+    <span class="n">{% if s.sus %}{{ s.sus }} out{% endif %}</span>
+    {% endfor %}
+  </div>
+</section>
+
+{% if result.suspects %}
+<section>
+  <h2>The {{ result.suspects | length }} that don't add up</h2>
+  <p>Most suspicious first. Every review here is linked, so the call is yours.</p>
+  <ol class="ledger">
+    {% for r in result.suspects %}
+    <li>
+      <div class="rate">{{ '★' * r.rating }}<i>{{ '★' * (5 - r.rating) }}</i><small>{{ r.date | day }}</small></div>
+      <div>
+        <div class="who">
+          <a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a>
+          <span>{% if r.history and r.history.n > r.user_reviews %}{{ r.history.n }} reviews and ratings{% elif r.user_reviews <= 1 %}their only review{% else %}{{ r.user_reviews }} reviews in total{% endif %}{% if r.local_guide %} · Local Guide{% endif %}{% if r.photos %} · {{ r.photos }} photo{{ 's' if r.photos != 1 }}{% endif %}</span>
+        </div>
+        <div class="chips">
+          {% for t in r.tells %}<span class="chip">{{ t }}</span>{% endfor %}
+          {% for t in r.trust %}<span class="chip trust">{{ t }}</span>{% endfor %}
+        </div>
+        {% set why = r.tells.values() | reject("in", ["their only review", "no text"]) | list %}
+        {% if why %}<div class="why">{{ why | join(" · ") }}</div>{% endif %}
+        {% if r.text %}<q>{{ r.text }}</q>{% endif %}
+        {% if r.history %}
+        <div class="hist"><b>Everything they have reviewed:</b>
+          {% for s in (5, 4, 3, 2, 1) if r.history.ratings[s] %}{{ r.history.ratings[s] }}×{{ s }}★{{ ', ' if not loop.last }}{% endfor %}{% if r.history.places %} · {{ r.history.places[:6] | join(", ") }}{% if r.history.places | length > 6 %}, +{{ r.history.places | length - 6 }} more{% endif %}{% else %} · nothing but this place{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
+{% if result.echoes %}
+<section>
+  <h2>Saying the same thing</h2>
+  <p>Reviews whose wording overlaps by half or more.</p>
+  {% for cluster in result.echoes %}
+  <div class="echo">
+    {% for r in cluster %}
+    <blockquote>{{ r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }}</footer></blockquote>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section>
+  <h2>How this was read</h2>
+  <p>{{ calls }} SerpApi calls: one <code>google_maps</code> search for the place, {{ (reviews | length / 20) | round(0, 'ceil') | int }} pages of <code>google_maps_reviews</code> newest first, and <code>google_maps_contributor_reviews</code> for {{ checked | length }} accounts worth a closer look. Nothing was scraped by hand; nothing is stored beyond the responses.</p>
+  <div class="method">
+    <div>
+      <h3>The tells, and how much each one weighs</h3>
+      <table>
+        {% for name, (w, desc) in tells.items() %}<tr><td>{{ name }}</td><td>{{ desc }}</td><td class="w">{{ w }}</td></tr>{% endfor %}
+      </table>
+      <h3 style="margin-top:20px">What earns trust back</h3>
+      <table>
+        {% for name, w in trust.items() %}<tr><td>{{ name }}</td><td class="w">−{{ w }}</td></tr>{% endfor %}
+      </table>
+    </div>
+    <div>
+      <h3>What the numbers mean</h3>
+      <p>A review's suspicion is the chance at least one of its tells is a true signal (they combine as noisy-OR), discounted by the traits that cost real effort to fake. The score ranks; it never convicts on its own.</p>
+      <p>What gets taken out is only what the place's own reviewers cannot explain: the five-stars from thin accounts beyond the rate established accounts give, the reviews in a burst beyond that week's expected count, and every member of an echo or a ring. Bursts are judged against the sample's median week (Poisson tail below 0.001, at least 2.5× the median).</p>
+      <h3>Where this is blind</h3>
+      <ul>
+        <li>A place where everyone gives five stars looks the same whether they mean it or not. The gradient is the evidence; a flat 95% is not.</li>
+        <li>A first review at a famous place is normal. That is why a thin account alone never counts, only the excess does.</li>
+        <li>Two accounts that share other places are usually a couple. Rings need three.</li>
+        <li>"Newest first" still surfaces old reviews edited recently; they are shown but kept out of the axis.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="end">
+  <span>sincere reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>.</span>
+  <span>{{ reviews | length }} reviews · {{ first | day }} to {{ last | day }}</span>
+</footer>
+<script>
+(() => {
+  const tip = document.querySelector('.tip'), box = document.querySelector('.tl');
+  const show = a => {
+    const d = a.dataset;
+    tip.innerHTML = `<b>${d.name}</b> · ${d.date}<br><span class="s">${'★'.repeat(d.rating)}</span>${d.tells ? `<br><span class="t">${d.tells}</span>` : ''}`;
+    const r = a.getBoundingClientRect(), b = box.getBoundingClientRect();
+    tip.style.left = (r.left + r.width / 2 - b.left) + 'px';
+    tip.style.top = (r.top - b.top) + 'px';
+    tip.classList.add('on');
+  };
+  box.querySelectorAll('svg a').forEach(a => {
+    a.addEventListener('mouseenter', () => show(a));
+    a.addEventListener('focus', () => show(a));
+    a.addEventListener('mouseleave', () => tip.classList.remove('on'));
+    a.addEventListener('blur', () => tip.classList.remove('on'));
+  });
+})();
+</script>
+</body>
+</html>

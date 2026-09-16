@@ -1,0 +1,19 @@
+[project]
+name = "sincere"
+version = "0.1.0"
+description = "Is this rating real? Reads a Google Maps place's reviews for the tells of manipulation, via SerpApi."
+authors = [
+    { name = "zcag", email = "cagdassalur@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "serpapi>=1.1.1",
+]
+
+[project.scripts]
+sincere = "sincere:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
