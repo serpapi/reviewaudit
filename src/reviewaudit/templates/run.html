@@ -17,6 +17,12 @@
     <span class="note"></span>
   </div>
   <div class="err" hidden></div>
+  <form class="retry" action="/runs" method="post" hidden>
+    <input type="hidden" name="q" value="{{ job.query }}"><input type="hidden" name="title" value="{{ job.place.title or '' }}"><input type="hidden" name="thumbnail" value="{{ job.place.thumbnail or '' }}"><input type="hidden" name="address" value="{{ job.place.address or '' }}">
+    <input type="hidden" name="reviews" value="{{ job.reviews }}"><input type="hidden" name="lookups" value="{{ job.lookups }}">
+    <button class="btn" type="submit">Try again</button>
+    <span class="note">Everything already fetched is cached, so a second attempt costs almost nothing.</span>
+  </form>
 </section>
 <script>
 (() => {
@@ -51,7 +57,7 @@
       setTimeout(() => { if (!document.hidden) location.href = '/' + j.result.report; }, 1800);
       return true;
     }
-    if (j.status === 'error') { const e = root.querySelector('.err'); e.hidden = false; e.textContent = j.error; return true; }
+    if (j.status === 'error') { root.querySelector('.err').hidden = false; root.querySelector('.err').textContent = j.error; root.querySelector('.retry').hidden = false; return true; }
     return false;
   };
   const tick = async () => {

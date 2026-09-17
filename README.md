@@ -138,7 +138,7 @@ Printed on every case, because they matter:
 git clone https://github.com/zcag/reviewaudit && cd reviewaudit
 uv sync
 uv run pytest                 # the tells on synthetic data, the app's routes
-uv run reviewaudit serve          # the app, reloading templates on each request
+uv run reviewaudit serve --reload   # the app, restarting when the code changes
 ```
 
 `tools/overflow.js`, pasted into the console on the cases page, loads every case at five

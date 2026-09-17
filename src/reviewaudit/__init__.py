@@ -15,6 +15,7 @@ def main():
     ap.add_argument("--hl", default="en")
     ap.add_argument("--port", type=int, default=8811, help="port for `reviewaudit serve`")
     ap.add_argument("--no-open", action="store_true", help="don't open the browser on `reviewaudit serve`")
+    ap.add_argument("--reload", action="store_true", help="restart the server when the code changes (for development)")
     ap.add_argument("--norms", action="store_true", help="rebuild norms.json and the docket (reports/reviewaudit.html) from every case under reports/, then exit")
     args = ap.parse_args()
 
@@ -26,7 +27,7 @@ def main():
     if args.place == "serve":
         from .web import serve
 
-        return serve(args.port, open_browser=not args.no_open)
+        return serve(args.port, open_browser=not args.no_open, reload=args.reload)
     if not args.place:
         ap.error("give a place, or `serve`")
 

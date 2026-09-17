@@ -75,7 +75,7 @@ def run_job(job):
         (REPORTS / "reviewaudit.html").write_text(docket(REPORTS))
         with lock:
             job.update(status="done", result=summary, finished=time.time())
-    except Exception as e:  # the page shows it; nothing else to do with it here
+    except Exception as e:  # the page shows it, with a retry: the responses are cached, so a second go is nearly free
         with lock:
             job.update(status="error", error=f"{type(e).__name__}: {e}", finished=time.time())
     save(job)
@@ -189,7 +189,7 @@ REPORTS.mkdir(parents=True, exist_ok=True)
 app.mount("/", StaticFiles(directory=REPORTS), name="reports")
 
 
-def serve(port=8811, open_browser=True):
+def serve(port=8811, open_browser=True, reload=False):
     import socket
     import webbrowser
 
@@ -199,4 +199,4 @@ def serve(port=8811, open_browser=True):
     print(f"reviewaudit is at http://localhost:{port}  (from another machine: http://{host}:{port})")
     if open_browser:
         threading.Timer(0.8, lambda: webbrowser.open(f"http://localhost:{port}")).start()
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
+    uvicorn.run("reviewaudit.web:app" if reload else app, host="0.0.0.0", port=port, log_level="warning", reload=reload)

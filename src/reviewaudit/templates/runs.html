@@ -8,7 +8,7 @@
   <li>
     {% if j.place.thumbnail %}<img src="{{ j.place.thumbnail | sized(200) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}
     <div><b>{{ j.place.title or j.query }}</b><div class="sub">{{ j.status }}{% if j.status == 'running' %}: {{ stages[j.stage] | lower }}, {{ j.note }}{% elif j.status == 'error' %}: {{ j.error }}{% elif j.result %}: {{ j.result.tier }}, {{ j.result.calls }} credits{% endif %}</div></div>
-    <div class="act">{% if j.status == 'done' %}<a class="btn quiet" href="/{{ j.result.report }}">Open the case</a>{% else %}<a class="btn quiet" href="/runs/{{ j.id }}">Watch</a>{% endif %}</div>
+    <div class="act">{% if j.status == 'done' %}<a class="btn quiet" href="/{{ j.result.report }}">Open the case</a>{% else %}<a class="btn quiet" href="/runs/{{ j.id }}">{{ 'What went wrong' if j.status == 'error' else 'Watch' }}</a>{% endif %}</div>
   </li>
   {% else %}
   <li><div></div><div>No runs yet. <a href="/">Search for a place</a> to start one.</div></li>
