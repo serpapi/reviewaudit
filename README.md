@@ -1,8 +1,8 @@
-<p align="center"><img src="docs/report.png" alt="A sincere case: Nusr-Et Steakhouse, padded" width="880"></p>
+<p align="center"><img src="docs/report.png" alt="A reviewaudit case: Nusr-Et Steakhouse, padded" width="880"></p>
 
-# sincere
+# reviewaudit
 
-**Is this 4.8 real?** Give sincere a place on Google Maps. It reads the newest reviews
+**Is this 4.8 real?** Give reviewaudit a place on Google Maps. It reads the newest reviews
 through [SerpApi](https://serpapi.com), pulls the full records of the reviewers worth a
 look, and writes one page that says how much of the praise the place's own reviewers can
 explain, which reviews don't add up, and what kind of padding it is: bought, or asked for
@@ -14,12 +14,12 @@ minutes; the free plan's 250 a month reads five places.
 ## Quick start
 
 ```sh
-uv tool install git+https://github.com/zcag/sincere     # or: pipx install git+https://github.com/zcag/sincere
-sincere serve                                            # opens http://localhost:8811
+uv tool install git+https://github.com/zcag/reviewaudit     # or: pipx install git+https://github.com/zcag/reviewaudit
+reviewaudit serve                                            # opens http://localhost:8811
 ```
 
 Paste your key from [serpapi.com/manage-api-key](https://serpapi.com/manage-api-key) when
-the app asks (it is saved to `~/.sincere/config.json`, readable by you only; `SERPAPI_KEY`
+the app asks (it is saved to `~/.reviewaudit/config.json`, readable by you only; `SERPAPI_KEY`
 in the environment works too), search for a place, click *Read the reviews*, watch it run,
 open the case.
 
@@ -27,9 +27,9 @@ The same read from the terminal:
 
 ```sh
 export SERPAPI_KEY=…
-sincere "Nusr-Et Steakhouse Etiler"        # → ~/.sincere/reports/nusr-et-steakhouse-besiktas-istanbul.html
-sincere 0x14cab61013b1d78b:0xc36794433940ac13 --reviews 400 --lookups 50
-sincere --norms                            # rebuild the "beside other places" baseline from your own cases
+reviewaudit "Nusr-Et Steakhouse Etiler"        # → ~/.reviewaudit/reports/nusr-et-steakhouse-besiktas-istanbul.html
+reviewaudit 0x14cab61013b1d78b:0xc36794433940ac13 --reviews 400 --lookups 50
+reviewaudit --norms                            # rebuild the "beside other places" baseline from your own cases
 ```
 
 ## What you get
@@ -64,7 +64,7 @@ Three SerpApi engines, about 42 calls:
    for the 30 reviewers most worth a closer look: everything the account has ever reviewed,
    with the place behind each rating.
 
-Every response is cached under `~/.sincere/cache`, so re-reading a place or rebuilding a
+Every response is cached under `~/.reviewaudit/cache`, so re-reading a place or rebuilding a
 report costs nothing.
 
 ## What it looks for
@@ -93,10 +93,10 @@ Each review's suspicion is the noisy-OR of its tells' weights, discounted by tra
 cost effort to fake (Local Guide, photos, long text, a deep record). The weights live in
 `signals.py` and are printed at the bottom of every case.
 
-Every case also shows the place beside every other place sincere has read: reviewers with
-no record, the first-timer gap, batches, staff named, photos. sincere ships with the
+Every case also shows the place beside every other place reviewaudit has read: reviewers with
+no record, the first-timer gap, batches, staff named, photos. reviewaudit ships with the
 baseline from its first 19 places across nine cities; once you have read eight of your
-own, `sincere --norms` (or any run in the app) replaces it with yours.
+own, `reviewaudit --norms` (or any run in the app) replaces it with yours.
 
 ## Where it is blind
 
@@ -126,24 +126,24 @@ Printed on every case, because they matter:
 ## Development
 
 ```sh
-git clone https://github.com/zcag/sincere && cd sincere
+git clone https://github.com/zcag/reviewaudit && cd reviewaudit
 uv sync
 uv run pytest                 # the tells on synthetic data, the app's routes
-uv run sincere serve          # the app, reloading templates on each request
+uv run reviewaudit serve          # the app, reloading templates on each request
 ```
 
 `tools/overflow.js`, pasted into the console on the cases page, loads every case at five
-widths and lists anything that leaks out of its card. `SINCERE_HOME` moves the data
+widths and lists anything that leaks out of its card. `REVIEWAUDIT_HOME` moves the data
 directory.
 
 ```
-src/sincere/api.py        cached SerpApi calls, pagination, the empty-page retry
-src/sincere/signals.py    the tells, the baseline excess, suspect selection
-src/sincere/case.py       findings with evidence, what was ruled out, the nature of the padding
-src/sincere/core.py       one place end to end, with progress
-src/sincere/report.py     chart geometry (timeline swarm, bars, map tile), rendering
-src/sincere/web.py        the app: search, runs, cases
-src/sincere/templates/    the case page, the app pages, one stylesheet
+src/reviewaudit/api.py        cached SerpApi calls, pagination, the empty-page retry
+src/reviewaudit/signals.py    the tells, the baseline excess, suspect selection
+src/reviewaudit/case.py       findings with evidence, what was ruled out, the nature of the padding
+src/reviewaudit/core.py       one place end to end, with progress
+src/reviewaudit/report.py     chart geometry (timeline swarm, bars, map tile), rendering
+src/reviewaudit/web.py        the app: search, runs, cases
+src/reviewaudit/templates/    the case page, the app pages, one stylesheet
 ```
 
 ## License

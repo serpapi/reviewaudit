@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-from sincere import signals
-from sincere.signals import Review
+from reviewaudit import signals
+from reviewaudit.signals import Review
 
 T0 = datetime(2026, 6, 1, 12, tzinfo=timezone.utc)
 

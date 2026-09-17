@@ -5,7 +5,7 @@
 </head>
 <body>
 <header>
-  <a class="wordmark" href="sincere.html">sincere</a>
+  <a class="wordmark" href="reviewaudit.html">reviewaudit</a>
   <span class="meta">case read on {{ generated }}</span>
 </header>
 <main>
@@ -83,7 +83,7 @@
       <tr><td title="{{ c.desc }}">{{ c.label }}</td><td class="here">{{ c.here }}{% if c.high or c.low %} <span class="mark">{{ '▲' if c.high else '▼' }}</span>{% endif %}</td><td>{{ c.typical }}</td></tr>
       {% endfor %}
     </table>
-    {% else %}<p class="why" style="margin-top:0">No norms yet: run <code>sincere --norms</code> once a few places are in.</p>{% endif %}
+    {% else %}<p class="why" style="margin-top:0">No norms yet: run <code>reviewaudit --norms</code> once a few places are in.</p>{% endif %}
   </section>
 
   <section class="card" id="when">
@@ -150,7 +150,7 @@
 </div>
 </main>
 <footer class="end">
-  <span>sincere reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>.</span>
+  <span>reviewaudit reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>.</span>
   <span>{{ reviews | length }} reviews · {{ first | day }} to {{ last | day }}</span>
 </footer>
 {% include "script.html" %}

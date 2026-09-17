@@ -1,10 +1,10 @@
-"""Where sincere keeps things: one folder, yours, overridable with SINCERE_HOME."""
+"""Where reviewaudit keeps things: one folder, yours, overridable with REVIEWAUDIT_HOME."""
 
 import json
 import os
 from pathlib import Path
 
-HOME = Path(os.environ.get("SINCERE_HOME", "~/.sincere")).expanduser()
+HOME = Path(os.environ.get("REVIEWAUDIT_HOME", "~/.reviewaudit")).expanduser()
 CACHE, REPORTS, RUNS, CONFIG = HOME / "cache", HOME / "reports", HOME / "runs", HOME / "config.json"
 
 

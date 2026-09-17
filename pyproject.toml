@@ -1,5 +1,5 @@
 [project]
-name = "sincere"
+name = "reviewaudit"
 version = "0.1.0"
 description = "Is this 4.8 real? Reads a Google Maps place's reviews for the tells of manipulation, through SerpApi."
 readme = "README.md"
@@ -27,11 +27,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/zcag/sincere"
-Source = "https://github.com/zcag/sincere"
+Homepage = "https://github.com/zcag/reviewaudit"
+Source = "https://github.com/zcag/reviewaudit"
 
 [project.scripts]
-sincere = "sincere:main"
+reviewaudit = "reviewaudit:main"
 
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]

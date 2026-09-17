@@ -1,4 +1,4 @@
-"""What is typical. Every case writes its measures next to its report; `sincere --norms` folds them into norms.json,
+"""What is typical. Every case writes its measures next to its report; `reviewaudit --norms` folds them into norms.json,
 and the report then shows each number beside the median and the middle 80% of every place read so far."""
 
 import json
@@ -7,7 +7,7 @@ from statistics import median
 
 from .paths import HOME
 
-SHIPPED = Path(__file__).parent / "norms.json"  # the places sincere had read when it shipped
+SHIPPED = Path(__file__).parent / "norms.json"  # the places reviewaudit had read when it shipped
 NORMS = HOME / "norms.json"  # yours, once you have read enough of your own
 LABELS = {
     "first_share": ("reviewers with no record", "share of reviews from accounts reviewing for the first time"),

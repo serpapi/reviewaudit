@@ -117,7 +117,7 @@ def render(place, reviews, result, api, third_party=None):
     og = dict(
         title=f"{place['title']}: {v['tier']}",
         description=(f"{k} of the {fives} recent five-star reviews are beyond what this place's own reviewers explain; the last {len(reviews)} rate {result['clean_rating']} without them, not {result['sample_rating']}."
-                     if result["suspects"] else f"Nothing in the last {len(reviews)} reviews goes beyond what this place's own reviewers explain.") + " Read with sincere over SerpApi.",
+                     if result["suspects"] else f"Nothing in the last {len(reviews)} reviews goes beyond what this place's own reviewers explain.") + " Read with reviewaudit over SerpApi.",
         image=re.sub(r"=w\d+-h\d+[^&]*$", "=w1200-h630-c", place["thumbnail"]) if place.get("thumbnail") else None,
     )
     return tpl.render(

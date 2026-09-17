@@ -19,7 +19,7 @@ from .report import docket, env
 
 STAGES = [("place", "Find the place"), ("reviews", "Read the newest reviews"), ("records", "Pull reviewer records"), ("analysis", "Weigh the tells"), ("done", "Write the case")]
 
-app = FastAPI(title="sincere")
+app = FastAPI(title="reviewaudit")
 pool = ThreadPoolExecutor(max_workers=2)
 jobs, lock = {}, threading.Lock()
 
@@ -69,7 +69,7 @@ def run_job(job):
     try:
         summary = read_place(job["query"], reviews=job["reviews"], lookups=job["lookups"], progress=say)
         norms.build(REPORTS)
-        (REPORTS / "sincere.html").write_text(docket(REPORTS))
+        (REPORTS / "reviewaudit.html").write_text(docket(REPORTS))
         with lock:
             job.update(status="done", result=summary, finished=time.time())
     except Exception as e:  # the page shows it; nothing else to do with it here
@@ -177,7 +177,7 @@ def runs_page():
 
 
 @app.get("/cases", response_class=HTMLResponse)
-@app.get("/sincere.html", response_class=HTMLResponse)
+@app.get("/reviewaudit.html", response_class=HTMLResponse)
 def cases_page():
     return page("cases.html", cases=cases(REPORTS))
 
@@ -193,7 +193,7 @@ def serve(port=8811, open_browser=True):
     import uvicorn
 
     host = socket.gethostname().split(".")[0]
-    print(f"sincere is at http://localhost:{port}  (from another machine: http://{host}:{port})")
+    print(f"reviewaudit is at http://localhost:{port}  (from another machine: http://{host}:{port})")
     if open_browser:
         threading.Timer(0.8, lambda: webbrowser.open(f"http://localhost:{port}")).start()
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")

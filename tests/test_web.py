@@ -3,15 +3,15 @@ from pathlib import Path
 
 
 def client(tmp_path, monkeypatch):
-    monkeypatch.setenv("SINCERE_HOME", str(tmp_path))
+    monkeypatch.setenv("REVIEWAUDIT_HOME", str(tmp_path))
     monkeypatch.delenv("SERPAPI_KEY", raising=False)
     monkeypatch.delenv("SERPAPI_API_KEY", raising=False)
     import importlib
 
-    from sincere import paths
+    from reviewaudit import paths
 
     importlib.reload(paths)
-    from sincere import core, web
+    from reviewaudit import core, web
 
     importlib.reload(core)
     importlib.reload(web)
