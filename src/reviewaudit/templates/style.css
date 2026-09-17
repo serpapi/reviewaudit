@@ -310,6 +310,8 @@ h2.sec small { color: var(--muted); font: 400 14px var(--text); margin-left: 10p
 .finish { margin-top: 28px; display: flex; gap: 12px; align-items: center; }
 .finish[hidden], .err[hidden] { display: none; }
 .err { background: var(--attack-soft); color: var(--attack); padding: 12px 14px; border-radius: 8px; font-size: 14.5px; margin-top: 20px; }
+.err b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 6px; }
+.err code { background: transparent; border: 0; padding: 0; color: var(--attack); }
 .retry { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
 .retry[hidden] { display: none; }
 .kv { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; font-size: 14.5px; color: var(--ink-2); margin-top: 22px; }
