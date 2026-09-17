@@ -126,20 +126,23 @@ def setup_save(api_key_value: str = Form(alias="api_key")):
 
 
 @app.get("/search", response_class=HTMLResponse)
-def search(q: str = ""):
-    q = q.strip()
+def search(q: str = "", near: str = ""):
+    q, near = q.strip(), near.strip()
     if not q:
         return RedirectResponse("/")
     try:
         api = api_from_env()
     except NoKey:
         return RedirectResponse("/setup")
-    data = api.search(engine="google_maps", q=q)
+    try:
+        data = api.search(engine="google_maps", q=q, location=near, z=12) if near else api.search(engine="google_maps", q=q)
+    except RuntimeError:  # a place name SerpApi's location list does not know: let Google read it from the query instead
+        data = api.search(engine="google_maps", q=f"{q} {near}")
     hits = [data["place_results"]] if data.get("place_results") else data.get("local_results", [])
     known = by_data_id()
     for h in hits:
         h["case"] = known.get(h.get("data_id"))
-    return page("search.html", q=q, hits=hits, cost=api.calls)
+    return page("search.html", q=q, near=near, hits=hits, cost=api.calls)
 
 
 @app.post("/runs")

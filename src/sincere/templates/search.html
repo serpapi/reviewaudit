@@ -4,10 +4,11 @@
 <section class="ask" style="margin-top:40px">
   <form class="search" action="/search" method="get">
     <input type="search" name="q" value="{{ q }}" required>
+    <input type="text" name="near" class="near" value="{{ near }}" placeholder="near: a city" autocomplete="off">
     <button class="btn" type="submit">Search</button>
   </form>
 </section>
-<h2 class="sec" style="margin-top:36px">{{ hits | length }} place{{ 's' if hits | length != 1 }} on Google Maps<small>{{ 'one credit' if cost else 'from cache, no credit' }}</small></h2>
+<h2 class="sec" style="margin-top:36px">{{ hits | length }} place{{ 's' if hits | length != 1 }} on Google Maps{% if near %} near {{ near }}{% endif %}<small>{{ 'one credit' if cost else 'from cache, no credit' }}</small></h2>
 <ul class="hits">
   {% for h in hits %}
   <li>

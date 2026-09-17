@@ -5,6 +5,7 @@
   <p>Give sincere a place on Google Maps. It reads the newest reviews through SerpApi, pulls the records of the reviewers worth a look, and tells you how much of the praise the place's own reviewers can explain, and which reviews don't add up.</p>
   <form class="search" action="/search" method="get">
     <input type="search" name="q" placeholder="A restaurant, a clinic, a hotel, a shop" autofocus required>
+    <input type="text" name="near" class="near" placeholder="near: a city" autocomplete="off">
     <button class="btn" type="submit">Search Google Maps</button>
   </form>
   <p class="hint">One search is one SerpApi credit; reading a place is about 42. {% if not has_key %}<a href="/setup">Add your SerpApi key</a> first; the free plan has 250 a month.{% endif %}</p>
