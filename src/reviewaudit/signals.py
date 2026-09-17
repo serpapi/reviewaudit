@@ -351,6 +351,7 @@ def analyze(reviews, histories, place_data_id, place_title, place_address=""):
     suspects = pick_suspects(reviews, excess, burst_windows, close)
     kept = [r for r in reviews if r not in suspects]
     mean = lambda rs: round(sum(r.rating for r in rs) / len(rs), 2) if rs else None
+    with_record = [r for r in reviews if r.user_reviews >= 4]  # people who have reviewed elsewhere and can be checked
     fives = [r for r in reviews if r.rating == 5]
     measures = dict(  # the place-level numbers that norms are drawn from
         first_share=rows[0]["n"] / len(reviews),
@@ -367,6 +368,8 @@ def analyze(reviews, histories, place_data_id, place_title, place_address=""):
         measures=measures,
         sample_rating=mean(reviews),
         clean_rating=mean(kept),
+        record_rating=mean(with_record) if len(with_record) >= 25 else None,
+        record_n=len(with_record),
         suspects=suspects,
         depth=rows,
         excess=excess,

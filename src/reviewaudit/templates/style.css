@@ -213,7 +213,9 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
 .card > h3.sub { margin-top: 26px; }
 .card .tier { font-size: clamp(38px, 5.4vw, 60px); margin: 2px 0 12px; }
 .card .lede { font-size: 17px; max-width: 60ch; }
-.card .ratings { margin-top: 18px; gap: 28px; }
+.card .ratings { margin-top: 18px; gap: 26px; }
+.card .ratings div { min-width: 0; }
+.card .ratings div span { max-width: 17ch; }
 .card .ratings div b { font-size: 30px; }
 .card .why { color: var(--ink-2); font-size: 14px; line-height: 1.5; margin: 14px 0 0; max-width: 70ch; }
 .card .why + .why { margin-top: 8px; }

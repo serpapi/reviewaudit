@@ -17,7 +17,7 @@
 {% set F = by_id %}
 {% set span = (tl.hi - tl.lo).days %}
 {# which card proves which finding #}
-{% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict", "tail": "verdict"} %}
+{% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict", "tail": "verdict", "record": "verdict"} %}
 
 <div class="hero {{ 'has-photo' if place.thumbnail }}">
   {% if place.thumbnail %}<a class="photo" href="{{ place.photos_link or place.thumbnail }}" target="_blank" rel="noopener"><img src="{{ place.thumbnail | sized(400) }}" alt="" width="200" height="200"></a>{% endif %}
@@ -61,10 +61,13 @@
     <div class="ratings">
       <div><b class="num">{{ place.rating | rating }}</b><span>Google, all time</span></div>
       <div><b class="num">{{ result.sample_rating | rating }}</b><span>the last {{ reviews | length }}</span></div>
-      <div><b class="num {{ 'sus' if result.suspects and (result.clean_rating | rating) != (result.sample_rating | rating) }}">{{ result.clean_rating | rating }}</b><span>without the {{ result.suspects | length }}{% if result.suspects and (result.clean_rating | rating) == (result.sample_rating | rating) %}: a rating this high cannot fall by removing five-star reviews{% endif %}</span></div>
+      <div><b class="num {{ 'sus' if result.suspects and (result.clean_rating | rating) != (result.sample_rating | rating) }}">{{ result.clean_rating | rating }}</b><span>without the {{ result.suspects | length }}</span></div>
+      {% if result.record_rating %}<div><b class="num {{ 'sus' if result.sample_rating - result.record_rating >= 0.1 }}">{{ result.record_rating | rating }}</b><span>from the {{ result.record_n }} with a record</span></div>{% endif %}
     </div>
+    {% if result.suspects and (result.clean_rating | rating) == (result.sample_rating | rating) %}<p class="why">A rating this high cannot fall by removing five-star reviews. What changes is how many of those stars have a person behind them.</p>{% endif %}
     {% if F.drift %}<p class="why">{{ F.drift.claim }}</p>{% endif %}
     {% if F.tail %}<p class="why"><b>{{ F.tail.title }}.</b> {{ F.tail.claim }}</p>{% endif %}
+    {% if F.record %}<p class="why"><b>{{ F.record.title }}.</b> {{ F.record.claim }}</p>{% endif %}
     <h3 class="sub">The last {{ reviews | length }} by rating{% if result.suspects %}, violet is what was taken out{% endif %}{% if lifetime %}; grey, all {{ place.reviews | thousands }} reviews{% endif %}</h3>
     <div class="exhibits">{% include "stars.html" %}</div>
   </section>

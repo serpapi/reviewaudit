@@ -189,6 +189,15 @@ def build(place, reviews, result, checked):
                   "Neither is proof on its own; both are what bought reviews look like, and the exhibits below carry them.",
         ))
 
+    # 5b. what reviewers with a record say
+    if result["record_rating"] and result["sample_rating"] - result["record_rating"] >= 0.1:
+        findings.append(dict(
+            id="record", strength="moderate" if result["sample_rating"] - result["record_rating"] >= 0.2 else "weak",
+            title="People who review elsewhere rate it lower",
+            claim=f"The {result['record_n']} reviewers with four or more reviews to their name give it {result['record_rating']}, against {result['sample_rating']} from everyone. "
+                  "They are the ones whose record can be checked, and they are less impressed than the accounts that cannot.",
+        ))
+
     # 6. drift
     if place.get("rating") and result["sample_rating"] is not None:
         drift = result["sample_rating"] - place["rating"]
