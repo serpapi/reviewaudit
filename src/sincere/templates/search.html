@@ -1,0 +1,38 @@
+{% extends "app.html" %}
+{% block title %}{{ q }} · sincere{% endblock %}
+{% block body %}
+<section class="ask" style="margin-top:40px">
+  <form class="search" action="/search" method="get">
+    <input type="search" name="q" value="{{ q }}" required>
+    <button class="btn" type="submit">Search</button>
+  </form>
+</section>
+<h2 class="sec" style="margin-top:36px">{{ hits | length }} place{{ 's' if hits | length != 1 }} on Google Maps<small>{{ 'one credit' if cost else 'from cache, no credit' }}</small></h2>
+<ul class="hits">
+  {% for h in hits %}
+  <li>
+    {% if h.thumbnail %}<img src="{{ h.thumbnail | sized(200) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}
+    <div>
+      <b>{{ h.title }}</b>
+      <div class="sub">{% if h.type %}{{ h.type if h.type is string else h.type[0] }} · {% endif %}{{ h.address }}</div>
+      <div class="sub">{% if h.rating %}<span class="star">★</span> {{ h.rating | rating }} from {{ h.reviews | thousands }} reviews{% endif %}{% if h.open_state %} · {{ h.open_state }}{% endif %}</div>
+    </div>
+    <div class="act">
+      {% if h.case %}
+      <a class="btn" href="/{{ h.case.report }}">Open the case</a>
+      <small>{{ h.case.tier | capitalize }}, read already.
+      <form action="/runs" method="post" style="display:inline"><input type="hidden" name="q" value="{{ h.data_id }}"><input type="hidden" name="title" value="{{ h.title }}"><input type="hidden" name="thumbnail" value="{{ h.thumbnail or '' }}"><input type="hidden" name="address" value="{{ h.address or '' }}"><button class="btn quiet" style="padding:2px 8px;font-size:12.5px" type="submit">Read again</button></form></small>
+      {% else %}
+      <form action="/runs" method="post">
+        <input type="hidden" name="q" value="{{ h.data_id }}"><input type="hidden" name="title" value="{{ h.title }}"><input type="hidden" name="thumbnail" value="{{ h.thumbnail or '' }}"><input type="hidden" name="address" value="{{ h.address or '' }}"><input type="hidden" name="rating" value="{{ h.rating or '' }}">
+        <button class="btn" type="submit">Read the reviews</button>
+      </form>
+      <small>about 42 credits, two minutes</small>
+      {% endif %}
+    </div>
+  </li>
+  {% else %}
+  <li><div></div><div>Nothing on Google Maps for that. Try the name with the city.</div></li>
+  {% endfor %}
+</ul>
+{% endblock %}

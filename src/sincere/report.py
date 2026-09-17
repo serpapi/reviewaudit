@@ -112,7 +112,16 @@ def render(place, reviews, result, api, third_party=None):
     dates = sorted(r.date for r in reviews)
     checked = [r for r in reviews if r.history]
     findings, ruled_out, nature = build(place, reviews, result, checked)
+    v, k = result["verdict"], sum(r.rating == 5 for r in result["suspects"])
+    fives = sum(r.rating == 5 for r in reviews)
+    og = dict(
+        title=f"{place['title']}: {v['tier']}",
+        description=(f"{k} of the {fives} recent five-star reviews are beyond what this place's own reviewers explain; the last {len(reviews)} rate {result['clean_rating']} without them, not {result['sample_rating']}."
+                     if result["suspects"] else f"Nothing in the last {len(reviews)} reviews goes beyond what this place's own reviewers explain.") + " Read with sincere over SerpApi.",
+        image=re.sub(r"=w\d+-h\d+[^&]*$", "=w1200-h630-c", place["thumbnail"]) if place.get("thumbnail") else None,
+    )
     return tpl.render(
+        og=og,
         place=place,
         reviews=reviews,
         result=result,
@@ -138,8 +147,6 @@ def render(place, reviews, result, api, third_party=None):
 
 def docket(reports_dir):
     """An index of every case, most padded first."""
-    import json
+    from .core import cases
 
-    cases = [json.loads(p.read_text()) for p in Path(reports_dir).glob("*.json")]
-    cases.sort(key=lambda c: -c["padded"])
-    return env.get_template("docket.html").render(cases=cases, generated=datetime.now().strftime("%-d %B %Y"))
+    return env.get_template("docket.html").render(cases=cases(reports_dir), generated=datetime.now().strftime("%-d %B %Y"))

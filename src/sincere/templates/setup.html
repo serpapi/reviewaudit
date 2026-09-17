@@ -1,0 +1,22 @@
+{% extends "app.html" %}
+{% block title %}Your key · sincere{% endblock %}
+{% block body %}
+<section class="ask">
+  <h1>Your SerpApi key</h1>
+  <p>sincere runs on your machine and calls SerpApi with your key. Nothing leaves your computer except those calls. Get a key at <a href="https://serpapi.com/manage-api-key">serpapi.com/manage-api-key</a>; the free plan gives 250 searches a month, enough for five places.</p>
+  {% if bad %}<p class="err">That key did not work: SerpApi rejected it.</p>{% endif %}
+  <form class="key" action="/setup" method="post">
+    <input type="text" name="api_key" placeholder="paste your key" autocomplete="off" spellcheck="false" required>
+    <button class="btn" type="submit">Save and check</button>
+  </form>
+  <p class="hint">Saved to <code>~/.sincere/config.json</code>, readable by you only. <code>SERPAPI_KEY</code> in the environment takes precedence.</p>
+  {% if account %}
+  <div class="kv">
+    <span>account</span><b>{{ account.account_email }}</b>
+    <span>plan</span><b>{{ account.plan_name }}</b>
+    <span>credits left</span><b>{{ account.total_searches_left | thousands }}</b>
+    <span>this hour</span><b>{{ account.this_hour_searches }} of {{ account.account_rate_limit_per_hour | thousands }}</b>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

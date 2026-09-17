@@ -1,0 +1,57 @@
+{% extends "app.html" %}
+{% block title %}Reading {{ job.place.title or job.query }} · sincere{% endblock %}
+{% block body %}
+<section class="run" id="run" data-id="{{ job.id }}" data-status="{{ job.status }}">
+  <div class="who">
+    {% if job.place.thumbnail %}<img src="{{ job.place.thumbnail | sized(200) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}
+    <div><h1>{{ job.place.title or job.query }}</h1><p>{{ job.place.address or '' }}</p></div>
+  </div>
+  <ol class="steps">
+    {% for key, label in stages %}<li data-stage="{{ key }}"><span class="mark"></span><span>{{ label }}</span><span class="count"></span></li>{% endfor %}
+  </ol>
+  <div class="bar"><i></i></div>
+  <p class="note">{{ job.note }}</p>
+  <ul class="log"></ul>
+  <div class="finish" hidden>
+    <a class="btn" href="#">Open the case</a>
+    <span class="note"></span>
+  </div>
+  <div class="err" hidden></div>
+</section>
+<script>
+(() => {
+  const root = document.getElementById('run'), id = root.dataset.id;
+  const order = [...root.querySelectorAll('.steps li')].map(li => li.dataset.stage);
+  const bar = root.querySelector('.bar i'), note = root.querySelector('p.note'), log = root.querySelector('.log');
+  const weights = {place: 5, reviews: 35, records: 50, analysis: 5, done: 5};
+  const paint = j => {
+    const at = order.indexOf(j.stage);
+    order.forEach((s, i) => {
+      const li = root.querySelector(`[data-stage="${s}"]`);
+      li.className = i < at || j.status === 'done' ? 'done' : i === at && j.status === 'running' ? 'now' : '';
+      li.querySelector('.mark').textContent = li.className === 'done' ? '✓' : '';
+      li.querySelector('.count').textContent = i === at && j.total > 1 ? `${j.done} / ${j.total}` : '';
+    });
+    let pct = 0; order.forEach((s, i) => { if (i < at) pct += weights[s]; }); pct += weights[j.stage] * (j.total ? j.done / j.total : 0);
+    bar.style.width = (j.status === 'done' ? 100 : pct) + '%';
+    note.textContent = j.note;
+    log.innerHTML = (j.log || []).map(l => `<li>${new Date(l.t * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'})}  ${l.note}</li>`).join('');
+    if (j.status === 'done') {
+      const f = root.querySelector('.finish'); f.hidden = false;
+      f.querySelector('a').href = '/' + j.result.report;
+      f.querySelector('span').textContent = `${j.result.calls} credits spent, ${j.result.cached} calls from cache.`;
+      note.textContent = j.note; bar.style.width = '100%';
+      setTimeout(() => { if (!document.hidden) location.href = '/' + j.result.report; }, 1800);
+      return true;
+    }
+    if (j.status === 'error') { const e = root.querySelector('.err'); e.hidden = false; e.textContent = j.error; return true; }
+    return false;
+  };
+  const tick = async () => {
+    try { const j = await (await fetch(`/runs/${id}/status`)).json(); if (paint(j)) return; } catch (e) {}
+    setTimeout(tick, 1000);
+  };
+  tick();
+})();
+</script>
+{% endblock %}

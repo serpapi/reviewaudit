@@ -8,29 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root { color-scheme: light; --page:#f4f4f1; --ink:#191917; --ink-2:#55544f; --muted:#8b8a83; --line:#e3e2dc; --star:#d99a00; --sus:#6b46d9;
-  --display:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif; --text:"Instrument Sans",system-ui,sans-serif; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --page:#141416; --ink:#f2f2ee; --ink-2:#bdbcb4; --line:#2b2b2e; --star:#b5830f; --sus:#8a72e6; } }
-:root[data-theme="dark"] { color-scheme: dark; --page:#141416; --ink:#f2f2ee; --ink-2:#bdbcb4; --line:#2b2b2e; --star:#b5830f; --sus:#8a72e6; }
-body { margin:0; background:var(--page); color:var(--ink); font:16px/1.5 var(--text); -webkit-font-smoothing:antialiased; }
-main, header { max-width:880px; margin:0 auto; padding:0 20px; }
-header { display:flex; justify-content:space-between; align-items:baseline; padding-top:28px; }
-.wordmark { font:600 20px/1 var(--display); }
-.meta { color:var(--muted); font-size:14px; }
-h1 { font:800 clamp(30px,5vw,42px)/1.06 var(--display); letter-spacing:-0.025em; margin:48px 0 6px; }
-.sub { color:var(--ink-2); margin:0 0 32px; max-width:60ch; }
-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-th { text-align:left; font-weight:500; color:var(--muted); font-size:13.5px; padding:0 14px 8px 0; border-bottom:1px solid var(--line); }
-td { padding:11px 14px 11px 0; border-bottom:1px solid var(--line); vertical-align:top; }
-td.t a { font-weight:600; text-decoration-color:var(--line); }
-td.p { width:52px; padding-right:10px; } td.p img { width:52px; height:52px; object-fit:cover; border-radius:8px; display:block; }
-td.t span { display:block; color:var(--muted); font-size:13px; }
-td.n { text-align:right; white-space:nowrap; }
-.tier { font:600 14px var(--text); }
-.tier.padded { color:var(--sus); }
-.bar { display:inline-block; height:8px; background:var(--sus); border-radius:0 2px 2px 0; vertical-align:middle; margin-right:8px; }
-.drop { color:var(--sus); }
-@media (max-width:640px) { th:nth-child(4), td:nth-child(4) { display:none; } }
+{% include "style.css" %}
 </style>
 </head>
 <body>
@@ -38,19 +16,7 @@ td.n { text-align:right; white-space:nowrap; }
 <main>
 <h1>Cases</h1>
 <p class="sub">{{ cases | length }} places read, most padded first. Each row is a case file: what was found, what was ruled out, every review taken out with its link.</p>
-<table>
-  <tr><th></th><th>place</th><th>verdict</th><th>five-stars beyond baseline</th><th>Google</th><th>recent → without them</th></tr>
-  {% for c in cases %}
-  <tr>
-    <td class="p">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="" width="52" height="52" loading="lazy">{% endif %}</td>
-    <td class="t"><a href="{{ c.report }}">{{ c.title }}</a><span>{{ c.type if c.type is string else (c.type or [''])[0] }}{{ ' · ' if c.type }}{{ c.where }}{{ ' · ' if c.where }}{{ c.read }} of {{ c.reviews | thousands }} reviews read</span></td>
-    <td><span class="tier {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}</span></td>
-    <td><span class="bar" style="width:{{ (c.padded * 160) | int }}px"></span>{{ '%.0f' | format(c.padded * 100) }}%</td>
-    <td class="n">{{ c.rating }}</td>
-    <td class="n">{{ c.sample_rating }} → <span class="{{ 'drop' if c.clean_rating < c.sample_rating }}">{{ c.clean_rating }}</span></td>
-  </tr>
-  {% endfor %}
-</table>
+{% include "docket_table.html" %}
 </main>
 </body>
 </html>

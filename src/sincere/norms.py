@@ -5,7 +5,10 @@ import json
 from pathlib import Path
 from statistics import median
 
-NORMS = Path(__file__).parent / "norms.json"
+from .paths import HOME
+
+SHIPPED = Path(__file__).parent / "norms.json"  # the places sincere had read when it shipped
+NORMS = HOME / "norms.json"  # yours, once you have read enough of your own
 LABELS = {
     "first_share": ("reviewers with no record", "share of reviews from accounts reviewing for the first time"),
     "first_gap": ("first-timer five-star gap", "how much more often first-timers give five stars than accounts with 4 to 50 reviews"),
@@ -18,10 +21,14 @@ LABELS = {
 
 
 def load():
-    try:
-        return json.loads(NORMS.read_text())
-    except FileNotFoundError:
-        return None
+    for path in (NORMS, SHIPPED):
+        try:
+            n = json.loads(path.read_text())
+            if n["places"] >= 8:
+                return n
+        except FileNotFoundError:
+            pass
+    return None
 
 
 def build(reports_dir):
@@ -31,5 +38,6 @@ def build(reports_dir):
         vals = sorted(r["measures"][key] for r in rows if r.get("measures", {}).get(key) is not None)
         if len(vals) >= 5:
             out["measures"][key] = dict(median=median(vals), p10=vals[len(vals) // 10], p90=vals[-max(1, len(vals) // 10)], n=len(vals))
+    NORMS.parent.mkdir(parents=True, exist_ok=True)
     NORMS.write_text(json.dumps(out, indent=1))
     return out

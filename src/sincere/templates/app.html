@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}sincere{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+{% include "style.css" %}
+</style>
+</head>
+<body>
+<nav class="top">
+  <a class="wordmark" href="/">sincere</a>
+  <a href="/cases" {% if nav == 'cases' %}aria-current="page"{% endif %}>Cases</a>
+  <a href="/runs" {% if nav == 'runs' %}aria-current="page"{% endif %}>Runs</a>
+  {% if account %}<a class="credits" href="/setup" title="SerpApi searches left on your key">{{ account.total_searches_left | thousands }} <b>credits</b></a>{% elif has_key %}<a class="credits" href="/setup">key set</a>{% else %}<a class="credits" href="/setup">add your SerpApi key</a>{% endif %}
+</nav>
+<main>
+{% block body %}{% endblock %}
+</main>
+<footer class="end">
+  <span>sincere reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>. Your key, your credits, your machine.</span>
+  <span><a href="https://github.com/zcag/sincere">source</a></span>
+</footer>
+</body>
+</html>

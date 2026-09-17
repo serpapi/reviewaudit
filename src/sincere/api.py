@@ -2,12 +2,10 @@
 
 import hashlib
 import json
-import os
-from pathlib import Path
 
 import serpapi
 
-CACHE = Path(os.environ.get("SINCERE_CACHE", ".cache"))
+from .paths import CACHE
 
 
 class Api:
@@ -29,9 +27,12 @@ class Api:
             raise RuntimeError(f"{params['engine']}: {data['error']}")
         self.calls += 1
         if params["engine"] != "google_maps_reviews" or data.get("reviews"):  # an empty page is a Google hiccup, not a fact
-            CACHE.mkdir(exist_ok=True)
+            CACHE.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(data))
         return data
+
+    def account(self):
+        return self.client.account()
 
     def place(self, query):
         """A Maps search. An exact hit comes back as `place_results`; a broad one as `local_results` (first wins)."""
@@ -49,10 +50,12 @@ class Api:
         hits = [data.get("place_results")] if data.get("place_results") else data.get("local_results", [])
         return next((h for h in hits if h and h.get("data_id") == data_id), {})
 
-    def reviews(self, data_id, limit):
+    def reviews(self, data_id, limit, progress=None):
         """Newest-first pages of reviews. The first page is 8 regardless of `num`; the rest 20."""
         out, token = [], None
         while len(out) < limit:
+            if progress:
+                progress(len(out))
             params = dict(engine="google_maps_reviews", data_id=data_id, sort_by="newestFirst")
             if token:
                 params.update(next_page_token=token, num=20)

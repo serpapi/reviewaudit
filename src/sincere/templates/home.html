@@ -1,0 +1,28 @@
+{% extends "app.html" %}
+{% block body %}
+<section class="ask">
+  <h1>Is this 4.8 real?</h1>
+  <p>Give sincere a place on Google Maps. It reads the newest reviews through SerpApi, pulls the records of the reviewers worth a look, and tells you how much of the praise the place's own reviewers can explain, and which reviews don't add up.</p>
+  <form class="search" action="/search" method="get">
+    <input type="search" name="q" placeholder="A restaurant, a clinic, a hotel, a shop" autofocus required>
+    <button class="btn" type="submit">Search Google Maps</button>
+  </form>
+  <p class="hint">One search is one SerpApi credit; reading a place is about 42. {% if not has_key %}<a href="/setup">Add your SerpApi key</a> first; the free plan has 250 a month.{% endif %}</p>
+</section>
+{% if running %}
+<h2 class="sec">Reading now</h2>
+<div class="cards">
+  {% for j in running %}
+  <a class="case" href="/runs/{{ j.id }}">{% if j.place.thumbnail %}<img src="{{ j.place.thumbnail | sized(120) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}<div><b>{{ j.place.title or j.query }}</b><span class="sub">{{ j.note }}</span></div></a>
+  {% endfor %}
+</div>
+{% endif %}
+{% if cases %}
+<h2 class="sec">Cases<small><a href="/cases">all cases</a></small></h2>
+<div class="cards">
+  {% for c in cases %}
+  <a class="case" href="/{{ c.report }}">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}<div><b>{{ c.title }}</b><span class="sub">{{ c.where }}{{ ' · ' if c.where }}{{ c.rating | rating }} → {{ c.clean_rating | rating }}</span><span class="pill {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}{% if c.tier != 'looks genuine' %} · {{ (c.padded * 100) | round | int }}%{% endif %}</span></div></a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

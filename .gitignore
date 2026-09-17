@@ -1,4 +1,6 @@
 .venv/
 .cache/
 reports/
+runs/
+dist/
 __pycache__/
