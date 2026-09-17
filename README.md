@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="docs/icon.svg" width="72" alt=""><br>
+  <img src="docs/icon.png" width="76" alt=""><br>
   reviewaudit
 </h1>
 
