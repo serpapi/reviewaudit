@@ -330,9 +330,11 @@ td.p { width:52px; padding-right:10px; } td.p img { width:52px; height:52px; obj
 td.t span { display:block; color:var(--muted); font-size:13px; }
 td.n { text-align:right; white-space:nowrap; }
 .dtier { font:600 14px var(--text); }
+.dtier.nowrap { white-space: nowrap; }
 .dtier.padded { color:var(--sus); }
 .dbar { display:inline-block; height:8px; background:var(--sus); border-radius:0 2px 2px 0; vertical-align:middle; margin-right:8px; }
 .drop { color:var(--sus); }
+.same { color:var(--muted); font-size:13px; }
 @media (max-width:640px) { table.docket th:nth-child(4), table.docket td:nth-child(4) { display:none; } }
 
 @media print {

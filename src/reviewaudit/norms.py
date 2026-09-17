@@ -17,6 +17,7 @@ LABELS = {
     "photo_share": ("five-stars with a photo", "share of five-star reviews that carry a photo"),
     "text_share": ("five-stars with text", "share of five-star reviews that say anything"),
     "five_share": ("five-star share", "share of the reviews read that are five stars"),
+    "four_share": ("four-star share", "share of the reviews read that are four stars: the tail a real place collects"),
 }
 
 

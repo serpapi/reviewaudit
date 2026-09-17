@@ -26,5 +26,12 @@
   <span>reviewaudit reads Google Maps through <a href="https://serpapi.com/google-maps-reviews-api">SerpApi</a>. Your key, your credits, your machine.</span>
   <span><a href="https://github.com/zcag/reviewaudit">source</a></span>
 </footer>
+<script>
+addEventListener('error', e => {
+  const img = e.target;
+  if (img.tagName !== 'IMG') return;
+  const span = document.createElement('span'); span.className = 'noimg'; img.replaceWith(span);
+}, true);
+</script>
 </body>
 </html>

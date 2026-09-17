@@ -71,10 +71,14 @@ def build(place, reviews, result, checked):
         ruled_out.append("Too few reviews from accounts with a record to set a baseline for first-time reviewers.")
 
     # 2. bursts
+    dense = result["half_days"] < 28  # half the sample lands within a month: too busy for a week to stand out
+    if dense:
+        ruled_out.append(f"Half of the {len(reviews)} reviews read arrived within {result['half_days']} day{'s' if result['half_days'] != 1 else ''} of each other, so no week here can stand out from the rest. A burst cannot be told from the normal pace; read further back with --reviews 600 to judge it.")
     for name, word in (("praise burst", "five"), ("attack burst", "one")):
         ws = result["bursts"].get(name, [])
         if not ws:
-            ruled_out.append(f"No week carried an unusual run of {word}-star reviews.")
+            if not dense:
+                ruled_out.append(f"No week carried an unusual run of {word}-star reviews.")
             continue
         rows = []
         for w in ws:
@@ -134,6 +138,20 @@ def build(place, reviews, result, checked):
         ))
     elif named:
         ruled_out.append(f"Only {len(named)} reviews name a member of staff, so the place is not running its ratings through the people at the counter.")
+
+    # 3c. no four-star tail
+    m = result["measures"]
+    fours = sum(r.rating == 4 for r in reviews)
+    if len(reviews) >= 80 and m["five_share"] >= 0.9 and fours <= 1:
+        findings.append(dict(
+            id="tail", strength="moderate",
+            title="Nobody ever gives it four stars",
+            claim=f"{fours} of the last {len(reviews)} reviews are four stars, against {_pct(m['five_share'])} five stars"
+                  + (f" and {sum(r.rating <= 2 for r in reviews)} at one or two." if any(r.rating <= 2 for r in reviews) else ".")
+                  + " Places collect a four-star tail: the customer who enjoyed it but waited, or would come back but not rave. A wall of fives with nothing beside it means the reviews are being chosen before they are written, by whoever is asked.",
+        ))
+    elif len(reviews) >= 80 and m["five_share"] >= 0.85:
+        ruled_out.append(f"{fours} of the {len(reviews)} reviews read are four stars. Even at {_pct(m['five_share'])} five stars, the four-star tail a real place collects is here.")
 
     # 4. echoes
     if result["echoes"]:

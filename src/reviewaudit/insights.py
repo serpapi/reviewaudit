@@ -36,8 +36,8 @@ def praise_and_complaints(reviews, n=22):
 
 def most_useful(reviews):
     """The most-liked review on each side of the ledger, when anyone liked anything."""
-    up = max((r for r in reviews if r.rating >= 4 and r.text and r.likes >= 3), key=lambda r: r.likes, default=None)
-    down = max((r for r in reviews if r.rating <= 2 and r.text and r.likes >= 3), key=lambda r: r.likes, default=None)
+    up = max((r for r in reviews if r.rating >= 4 and r.text and r.likes >= 2), key=lambda r: r.likes, default=None)
+    down = max((r for r in reviews if r.rating <= 2 and r.text and r.likes >= 2), key=lambda r: r.likes, default=None)
     return dict(up=up, down=down)
 
 

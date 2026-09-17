@@ -93,7 +93,7 @@
     <h3>The reviews other people found most useful</h3>
     <div class="echo">
       {% for r in (I.useful.up, I.useful.down) if r %}
-      <blockquote>{{ r.text_en or r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }} · {{ r.likes }} found this useful</footer></blockquote>
+      <blockquote>{{ r.text_en or r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }} · {{ r.likes }} {{ 'person' if r.likes == 1 else 'people' }} found this useful</footer></blockquote>
       {% endfor %}
     </div>
   </section>

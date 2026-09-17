@@ -21,6 +21,12 @@ pulls the full Google record of the reviewers worth a closer look, and writes a 
 that says which reviews the place's own baseline cannot explain, what the rating is without
 them, and what kind of padding it is: bought, or asked for at the table.
 
+The page above is a real read. A towing service in Atlanta with a **5.0 from 286 reviews**:
+198 of the last 200 reviews are five stars, **none** are four stars, 29% come from accounts
+that have never reviewed anything else (8% is typical), 3% carry a photo (14% is typical),
+and three separate weeks brought 24, 13 and 17 five-star reviews where four is this place's
+normal week.
+
 It runs on your machine with your own SerpApi key. A place costs about 42 credits and two
 minutes. The free plan's 250 searches a month read five places.
 
@@ -54,17 +60,23 @@ phrases with another review of the same place.
 **A group of accounts keeps reviewing the same places.** Three or more of the checked
 accounts that pairwise share other places. Two is a couple on holiday.
 
+**Nobody ever gives it four stars.** Real places collect a four-star tail: the customer who
+enjoyed it but waited, or would come back but not rave. A wall of fives with nothing beside
+it means the reviews are being chosen before they are written, by whoever is asked.
+
 None of these condemns a review on its own. What gets taken out is only the *excess* over
 what the place's own reviewers explain, and every review taken out is listed with a link
 back to Google so you can disagree.
-
-<p align="center"><img src="docs/insights.png" alt="What the reviews say: praise and complaints, sub-ratings, posting hours, who reviews, the owner" width="900"></p>
 
 Below the audit, the same reviews read as reviews: what people praise and what they complain
 about, Google's own review topics, sub-ratings for food, service and atmosphere with and
 without the reviews taken out, what people recommend ordering, the hour of day reviews are
 posted, the language mix and whether the reviewers are locals or visitors, where else they
 go, how fast the owner replies and to whom, and the reviews other people found most useful.
+
+<p align="center"><img src="docs/insights.png" alt="What the reviews say: praise and complaints, sub-ratings, posting hours, who reviews, the owner" width="900"></p>
+
+<p align="center"><i>Katz's Delicatessen, New York: genuine, and the reviews still have plenty to say.</i></p>
 
 Each case is one self-contained HTML file, light and dark, with Open Graph tags so a pasted
 link previews properly, and a print stylesheet.
@@ -74,7 +86,8 @@ link previews properly, and a print stylesheet.
 <p align="center"><img src="docs/home.png" alt="Home: search, and the cases read so far" width="900"></p>
 
 Search Google Maps for the place (one credit, and repeats are free: everything is cached),
-optionally near a city, then pick it from the results:
+optionally near a city. Places you have already read open their case instead of spending
+credits again:
 
 <p align="center"><img src="docs/search.png" alt="Search results from Google Maps" width="900"></p>
 
@@ -88,12 +101,16 @@ places" table on every case switches from the shipped baseline to yours:
 
 <p align="center"><img src="docs/cases.png" alt="The cases, most padded first" width="900"></p>
 
+A rating that does not move is not the same as a clean one: at a place where every review is
+five stars, removing 42 of them leaves 5.0. What changed is how many of those stars have a
+person behind them.
+
 From the terminal, the same read:
 
 ```sh
 export SERPAPI_KEY=…
-reviewaudit "Nusr-Et Steakhouse Etiler"
-reviewaudit 0x14cab61013b1d78b:0xc36794433940ac13 --reviews 400 --lookups 50
+reviewaudit "Westside Atlanta Towing"
+reviewaudit 0x88f505b69e94a0bf:0x847b2884185db12 --reviews 400 --lookups 50
 reviewaudit --norms       # rebuild the baseline and the case index from your own cases
 ```
 

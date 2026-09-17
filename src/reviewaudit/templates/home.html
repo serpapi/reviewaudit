@@ -22,7 +22,7 @@
 <h2 class="sec">Cases<small><a href="/cases">all cases</a></small></h2>
 <div class="cards">
   {% for c in cases %}
-  <a class="case" href="/{{ c.report }}">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}<div><b>{{ c.title }}</b><span class="sub">{{ c.where }}{{ ' · ' if c.where }}{{ c.rating | rating }} → {{ c.clean_rating | rating }}</span><span class="pill {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}{% if c.tier != 'looks genuine' %} · {{ (c.padded * 100) | round | int }}%{% endif %}</span></div></a>
+  <a class="case" href="/{{ c.report }}">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="">{% else %}<span class="noimg"></span>{% endif %}<div><b>{{ c.title }}</b><span class="sub">{{ c.where }}{{ ' · ' if c.where }}{% if (c.clean_rating | rating) < (c.sample_rating | rating) %}{{ c.sample_rating | rating }} → {{ c.clean_rating | rating }}{% else %}{{ c.sample_rating | rating }} recent, unchanged{% endif %}</span><span class="pill {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}{% if c.tier != 'looks genuine' %} · {{ (c.padded * 100) | round | int }}%{% endif %}</span></div></a>
   {% endfor %}
 </div>
 {% endif %}

@@ -7,7 +7,7 @@
     {% endfor %}
     {% for t in tl.ticks %}
     <line class="grid" x1="{{ t.x }}" x2="{{ t.x }}" y1="{{ tl.top - 6 }}" y2="{{ tl.height - tl.bottom + 6 }}"/>
-    <text class="axis" x="{{ t.x }}" y="{{ tl.height - 8 }}" text-anchor="{{ 'start' if loop.first else 'middle' }}">{{ t.label }}</text>
+    <text class="axis" x="{{ t.x }}" y="{{ tl.height - 8 }}" text-anchor="{{ 'start' if loop.first and t.x - tl.left < 30 else 'middle' }}">{{ t.label }}</text>
     {% endfor %}
     {% if tl.earlier %}<text class="earlier" x="{{ tl.left }}" y="{{ tl.top - 16 }}">‹ {{ tl.earlier | length }} older, edited recently</text>{% endif %}
     {% for p in tl.points %}

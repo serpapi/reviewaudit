@@ -1,4 +1,12 @@
 <script>
+addEventListener('error', e => {  // a Google photo that 404s should leave a clean gap, not a broken icon
+  const img = e.target;
+  if (img.tagName !== 'IMG') return;
+  const photo = img.closest('.photo, .who, td.p, a.case, .hits li');
+  if (img.closest('.photo')) { img.closest('.hero').classList.remove('has-photo'); img.closest('.photo').remove(); }
+  else if (photo) { const span = document.createElement('span'); span.className = 'noimg'; img.replaceWith(span); }
+  else img.remove();
+}, true);
 (() => {
   const tip = document.querySelector('.tip'), box = document.querySelector('.tl');
   if (!tip || !box) return;

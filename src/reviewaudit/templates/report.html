@@ -17,7 +17,7 @@
 {% set F = by_id %}
 {% set span = (tl.hi - tl.lo).days %}
 {# which card proves which finding #}
-{% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict"} %}
+{% set card_of = {"praise-burst": "when", "attack-burst": "when", "minutes": "batches", "staff": "batches", "depth": "who", "seasoned": "who", "records": "taken", "ring": "taken", "echo": "echoes", "drift": "verdict", "tail": "verdict"} %}
 
 <div class="hero {{ 'has-photo' if place.thumbnail }}">
   {% if place.thumbnail %}<a class="photo" href="{{ place.photos_link or place.thumbnail }}" target="_blank" rel="noopener"><img src="{{ place.thumbnail | sized(400) }}" alt="" width="200" height="200"></a>{% endif %}
@@ -61,9 +61,10 @@
     <div class="ratings">
       <div><b class="num">{{ place.rating | rating }}</b><span>Google, all time</span></div>
       <div><b class="num">{{ result.sample_rating | rating }}</b><span>the last {{ reviews | length }}</span></div>
-      <div><b class="num {{ 'sus' if result.suspects }}">{{ result.clean_rating | rating }}</b><span>without the {{ result.suspects | length }}</span></div>
+      <div><b class="num {{ 'sus' if result.suspects and (result.clean_rating | rating) != (result.sample_rating | rating) }}">{{ result.clean_rating | rating }}</b><span>without the {{ result.suspects | length }}{% if result.suspects and (result.clean_rating | rating) == (result.sample_rating | rating) %}: a rating this high cannot fall by removing five-star reviews{% endif %}</span></div>
     </div>
     {% if F.drift %}<p class="why">{{ F.drift.claim }}</p>{% endif %}
+    {% if F.tail %}<p class="why"><b>{{ F.tail.title }}.</b> {{ F.tail.claim }}</p>{% endif %}
     <h3 class="sub">The last {{ reviews | length }} by rating{% if result.suspects %}, violet is what was taken out{% endif %}{% if lifetime %}; grey, all {{ place.reviews | thousands }} reviews{% endif %}</h3>
     <div class="exhibits">{% include "stars.html" %}</div>
   </section>
@@ -90,7 +91,7 @@
     <h3>Every review read, by date and rating</h3>
     {% include "timeline.html" %}
     {% for id in ("praise-burst", "attack-burst") if F[id] %}<p class="why"><b>{{ F[id].title }}.</b> {{ F[id].claim }}</p>{% endfor %}
-    {% if not F["praise-burst"] and not F["attack-burst"] %}<p class="why">No week carried an unusual run of five- or one-star reviews.</p>{% endif %}
+    {% if not F["praise-burst"] and not F["attack-burst"] %}<p class="why">{% if result.half_days < 28 %}Half of these {{ reviews | length }} reviews arrived within {{ result.half_days }} day{{ 's' if result.half_days != 1 }} of each other: this place is reviewed too often for one week to stand out.{% else %}No week carried an unusual run of five- or one-star reviews.{% endif %}</p>{% endif %}
   </section>
 
   <section class="card c6" id="who">

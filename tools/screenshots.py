@@ -1,7 +1,10 @@
-"""Reproducible README screenshots: a fixed 1280px viewport at 2x, light theme, against a running app.
+"""The README images, taken against a running app so they are never hand-cropped.
 
     uv run reviewaudit serve --no-open &
-    uv run python tools/screenshots.py [http://localhost:8811] [a place to start a run on]
+    uv run python tools/screenshots.py [http://localhost:8811]
+
+Every shot is clipped to real element boundaries, so nothing is ever cut through the middle
+of a card. Edit CASE / INSIGHTS / SEARCH / RUN below to change which places appear.
 """
 
 import sys
@@ -11,54 +14,87 @@ import urllib.request
 
 from playwright.sync_api import sync_playwright
 
-base = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8811"
-run_query = sys.argv[2] if len(sys.argv) > 2 else "Pizza & Passione Napoli"
-out = "docs"
+BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8811"
+ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None  # e.g. home,cases: a run costs credits, skip it when you can
+OUT = "docs"
+CASE = "westside-atlanta-towing-atlanta.html"  # the hero: a 5.0 that does not hold up
+INSIGHTS = "katz-s-delicatessen-new-york.html"  # a place with enough unhappy reviews to have complaints
+SEARCH = "/search?q=towing&near=Atlanta,%20Georgia"
+RUN = "Pike Place Chowder Seattle"  # somewhere not yet read, so the run has work to do
+WIDTH, SCALE = 1280, 2
 
 
-def settle(page, ms=2500):
-    page.evaluate("document.documentElement.dataset.theme = 'light'")
+def settle(page, ms=2600):
+    page.evaluate("document.documentElement.dataset.theme = 'light'; document.activeElement && document.activeElement.blur()")
     page.wait_for_load_state("networkidle")
+    page.evaluate("""() => new Promise(done => {
+        const pending = [...document.images].filter(i => !i.complete);
+        if (!pending.length) return done();
+        let left = pending.length;
+        const tick = () => (--left <= 0) && done();
+        pending.forEach(i => { i.addEventListener('load', tick); i.addEventListener('error', tick); });
+        setTimeout(done, 6000);
+    })""")
     time.sleep(ms / 1000)
+
+
+def shot(page, path, *, through=None, height=None):
+    """Clip from the top of the page down to the bottom of `through` (a selector), or a height."""
+    if through:
+        box = page.locator(through).last.bounding_box()
+        height = box["y"] + box["height"] + 8
+    page.screenshot(path=f"{OUT}/{path}", full_page=True, clip={"x": 0, "y": 0, "width": WIDTH, "height": round(height)})
 
 
 with sync_playwright() as p:
     browser = p.chromium.launch()
-    ctx = browser.new_context(viewport={"width": 1280, "height": 860}, device_scale_factor=2, color_scheme="light")
-    page = ctx.new_page()
+    page = browser.new_context(viewport={"width": WIDTH, "height": 900}, device_scale_factor=SCALE, color_scheme="light").new_page()
 
-    page.goto(f"{base}/")
-    settle(page)
-    page.screenshot(path=f"{out}/home.png", full_page=True)
+    def want(name):
+        return not ONLY or name in ONLY
 
-    page.goto(f"{base}/search?q=pizza&near=Naples,%20Italy")
-    settle(page)
-    page.screenshot(path=f"{out}/search.png", full_page=True, clip={"x": 0, "y": 0, "width": 1280, "height": 960})
+    # the hero: the place card and the verdict, down to the end of the timeline
+    if want("report"):
+        page.goto(f"{BASE}/{CASE}")
+        settle(page, 3200)
+        shot(page, "report.png", through="#when")
 
-    page.goto(f"{base}/cases")
-    settle(page)
-    page.screenshot(path=f"{out}/cases.png", full_page=True, clip={"x": 0, "y": 0, "width": 1280, "height": 900})
+    # the insights band, as its own block
+    if want("insights"):
+        page.goto(f"{BASE}/{INSIGHTS}")
+        settle(page, 3000)
+        page.locator("h2.band ~ .grid").first.screenshot(path=f"{OUT}/insights.png")
 
-    # a run, caught while it pulls records
-    req = urllib.request.Request(f"{base}/runs", data=urllib.parse.urlencode(dict(q=run_query, title=run_query)).encode(), method="POST")
-    req.add_header("Content-Type", "application/x-www-form-urlencoded")
-    run_url = urllib.request.urlopen(req).geturl()
-    page.goto(run_url)
-    page.evaluate("document.documentElement.dataset.theme = 'light'")
-    for _ in range(120):
-        time.sleep(1)
-        count = page.evaluate("(document.querySelector('.steps li.now[data-stage=records] .count') || {}).textContent || ''")
-        if count and int(count.split("/")[0]) >= 8:
-            break
-    page.screenshot(path=f"{out}/run.png", full_page=True, clip={"x": 0, "y": 0, "width": 1280, "height": 760})
+    # home, down to the end of the case cards
+    if want("home"):
+        page.goto(f"{BASE}/")
+        settle(page)
+        shot(page, "home.png", through=".cards a.case")
 
-    # the richest case as the hero
-    page.goto(f"{base}/nusr-et-steakhouse-besiktas-istanbul.html")
-    settle(page, 3500)
-    page.screenshot(path=f"{out}/report.png", full_page=True, clip={"x": 0, "y": 0, "width": 1280, "height": 1280})
-    # a place with enough unhappy reviews to have a complaints list
-    page.goto(f"{base}/ciya-sofrasi-kadikoy-istanbul.html")
-    settle(page, 3000)
-    page.locator("h2.band ~ .grid").first.screenshot(path=f"{out}/insights.png")
+    # search results, whole rows only
+    if want("search"):
+        page.goto(f"{BASE}{SEARCH}")
+        settle(page)
+        shot(page, "search.png", through=".hits li:nth-child(6)")
+
+    # the cases list, whole rows only
+    if want("cases"):
+        page.goto(f"{BASE}/cases")
+        settle(page)
+        shot(page, "cases.png", through="table.docket tr:nth-child(9)")
+
+    # a run, caught while it pulls records: this one spends credits, so it is skipped unless asked for
+    if want("run"):
+      req = urllib.request.Request(f"{BASE}/runs", data=urllib.parse.urlencode(dict(q=RUN, title=RUN)).encode(), method="POST")
+      req.add_header("Content-Type", "application/x-www-form-urlencoded")
+      page.goto(urllib.request.urlopen(req).geturl())
+      page.evaluate("document.documentElement.dataset.theme = 'light'")
+      for _ in range(150):
+          time.sleep(1)
+          count = page.evaluate("(document.querySelector('.steps li.now[data-stage=records] .count') || {}).textContent || ''")
+          if count and int(count.split("/")[0]) >= 9:
+              break
+      shot(page, "run.png", through=".log li:nth-child(8)")
     browser.close()
-print("docs/{home,search,cases,run,report}.png")
+
+print(f"{OUT}/" + "{report,insights,home,search,cases,run}.png")

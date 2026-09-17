@@ -103,8 +103,18 @@ def poisson_tail(k, mu):
     return max(0.0, 1 - p)
 
 
+def half_days(reviews):
+    """How many days the newest half of the sample covers: how much time 200 reviews actually buy here."""
+    dates = sorted((r.date for r in reviews), reverse=True)
+    return (dates[0] - dates[len(dates) // 2]).days
+
+
 def bursts(reviews, rating, window=7, alpha=1e-3):
     """Sliding windows where `rating` arrives far faster than the sample's own rate says it should."""
+    if half_days(reviews) < 4 * window:  # the sample is a snapshot of days: its own weeks cannot say what a normal week is
+        return []
+    dates = sorted(r.date for r in reviews)
+    reviews = [r for r in reviews if r.date >= dates[len(dates) // 10]]  # old reviews edited recently are not a rate
     hits = sorted((r for r in reviews if r.rating == rating), key=lambda r: r.date)
     if len(hits) < 4:
         return []
@@ -350,6 +360,7 @@ def analyze(reviews, histories, place_data_id, place_title, place_address=""):
         photo_share=sum(r.photos > 0 for r in fives) / len(fives) if fives else None,
         text_share=sum(bool(r.text) for r in fives) / len(fives) if fives else None,
         five_share=len(fives) / len(reviews),
+        four_share=sum(r.rating == 4 for r in reviews) / len(reviews),
     )
     return dict(
         verdict=verdict(reviews, suspects),
@@ -361,6 +372,7 @@ def analyze(reviews, histories, place_data_id, place_title, place_address=""):
         excess=excess,
         base_share=base,
         bursts=burst_windows,
+        half_days=half_days(reviews),
         close=close,
         staff=staff,
         echoes=echoes,

@@ -4,10 +4,10 @@
   <tr>
     <td class="p">{% if c.thumbnail %}<img src="{{ c.thumbnail | sized(120) }}" alt="" width="52" height="52">{% endif %}</td>
     <td class="t"><a href="{{ c.report }}">{{ c.title }}</a><span>{{ c.type if c.type is string else (c.type or [''])[0] }}{{ ' · ' if c.type }}{{ c.where }}{{ ' · ' if c.where }}{{ c.read }} of {{ c.reviews | thousands }} reviews read</span></td>
-    <td><span class="dtier {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}</span></td>
+    <td><span class="dtier nowrap {{ 'padded' if c.tier != 'looks genuine' }}">{{ c.tier | capitalize }}</span></td>
     <td><span class="dbar" style="width:{{ (c.padded * 160) | int }}px"></span>{{ '%.0f' | format(c.padded * 100) }}%</td>
-    <td class="n">{{ c.rating }}</td>
-    <td class="n">{{ c.sample_rating }} → <span class="{{ 'drop' if c.clean_rating < c.sample_rating }}">{{ c.clean_rating }}</span></td>
+    <td class="n">{{ c.rating | rating }}</td>
+    <td class="n">{% if (c.clean_rating | rating) < (c.sample_rating | rating) %}{{ c.sample_rating | rating }} → <span class="drop">{{ c.clean_rating | rating }}</span>{% else %}{{ c.sample_rating | rating }} <span class="same">unchanged</span>{% endif %}</td>
   </tr>
   {% endfor %}
 </table>

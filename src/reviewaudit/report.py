@@ -54,7 +54,9 @@ def timeline(reviews, suspects, windows, width=880, height=300, r=4):
     step_months = 1 if span < 400 * 86400 else 3 if span < 1200 * 86400 else 12
     while d <= hi:
         if d >= lo:
-            ticks.append(dict(x=round(left + (d - lo).total_seconds() / span * plot_w, 1), label=d.strftime("%b %Y" if d.month == 1 or step_months > 1 or not ticks else "%b")))
+            x = round(left + (d - lo).total_seconds() / span * plot_w, 1)
+            if not ticks or x - ticks[-1]["x"] >= 64:  # never crowd the previous label
+                ticks.append(dict(x=x, label=d.strftime("%b %Y" if d.month == 1 or step_months > 1 or not ticks else "%b")))
         m = d.month - 1 + step_months
         d = d.replace(year=d.year + m // 12, month=m % 12 + 1)
     bands = []
