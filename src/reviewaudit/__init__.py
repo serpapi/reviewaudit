@@ -1,6 +1,7 @@
 """reviewaudit: is this rating real? Given a Google Maps place, read its reviews for the tells of manipulation."""
 
 import argparse
+from importlib.metadata import version
 from . import norms
 from .core import NoKey, read_place
 from .paths import REPORTS
@@ -16,6 +17,7 @@ def main():
     ap.add_argument("--port", type=int, default=8811, help="port for `reviewaudit serve`")
     ap.add_argument("--no-open", action="store_true", help="don't open the browser on `reviewaudit serve`")
     ap.add_argument("--reload", action="store_true", help="restart the server when the code changes (for development)")
+    ap.add_argument("--version", action="version", version=f"reviewaudit {version('reviewaudit')}")
     ap.add_argument("--norms", action="store_true", help="rebuild norms.json and the docket (reports/reviewaudit.html) from every case under reports/, then exit")
     args = ap.parse_args()
 
