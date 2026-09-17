@@ -10,6 +10,7 @@ from datetime import datetime
 from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from serpapi.exceptions import HTTPError
 
 from . import norms
 from .core import NoKey, api_from_env, cases, read_place
@@ -136,7 +137,7 @@ def search(q: str = "", near: str = ""):
         return RedirectResponse("/setup")
     try:
         data = api.search(engine="google_maps", q=q, location=near, z=12) if near else api.search(engine="google_maps", q=q)
-    except RuntimeError:  # a place name SerpApi's location list does not know: let Google read it from the query instead
+    except (RuntimeError, HTTPError):  # a place SerpApi's location list does not know (400): let Google read it from the query
         data = api.search(engine="google_maps", q=f"{q} {near}")
     hits = [data["place_results"]] if data.get("place_results") else data.get("local_results", [])
     known = by_data_id()
