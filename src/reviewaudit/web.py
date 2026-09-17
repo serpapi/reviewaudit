@@ -58,10 +58,13 @@ def save(job):
 
 
 def run_job(job):
-    def say(stage, done, total, note):
+    def say(stage, done, total, note, place=None):
         with lock:
-            job["stage"], job["done"], job["total"], job["note"] = stage, done, total, note
-            job["log"].append(dict(t=time.time(), stage=stage, done=done, total=total, note=note))
+            job["stage"], job["done"], job["total"], job["note"] = stage, done, total, note or job["note"]
+            if place:
+                job["place"] = {**job["place"], **{k: v for k, v in place.items() if v}}
+            if note:
+                job["log"].append(dict(t=time.time(), stage=stage, done=done, total=total, note=note))
             save(job)
 
     with lock:

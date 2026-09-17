@@ -24,7 +24,14 @@
   const order = [...root.querySelectorAll('.steps li')].map(li => li.dataset.stage);
   const bar = root.querySelector('.bar i'), note = root.querySelector('p.note'), log = root.querySelector('.log');
   const weights = {place: 5, reviews: 35, records: 50, analysis: 5, done: 5};
+  const who = root.querySelector('.who');
   const paint = j => {
+    if (j.place && j.place.thumbnail && who.querySelector('.noimg')) {
+      who.querySelector('h1').textContent = j.place.title;
+      who.querySelector('p').textContent = j.place.address || '';
+      const img = document.createElement('img'); img.src = j.place.thumbnail.replace(/=w\d+-h\d+[^&]*$/, '=w200-h200-c'); img.alt = '';
+      who.querySelector('.noimg').replaceWith(img);
+    }
     const at = order.indexOf(j.stage);
     order.forEach((s, i) => {
       const li = root.querySelector(`[data-stage="${s}"]`);

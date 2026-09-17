@@ -30,8 +30,9 @@ def main():
     if not args.place:
         ap.error("give a place, or `serve`")
 
-    def say(stage, done, total, note):
-        print(f"{stage:9} {done:>3}/{total:<3} {note}")
+    def say(stage, done, total, note, **_):
+        if note:
+            print(f"{stage:9} {done:>3}/{total:<3} {note}")
 
     try:
         s = read_place(args.place, reviews=args.reviews, lookups=args.lookups, hl=args.hl, progress=say)

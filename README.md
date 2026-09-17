@@ -133,8 +133,9 @@ uv run reviewaudit serve          # the app, reloading templates on each request
 ```
 
 `tools/overflow.js`, pasted into the console on the cases page, loads every case at five
-widths and lists anything that leaks out of its card. `REVIEWAUDIT_HOME` moves the data
-directory.
+widths and lists anything that leaks out of its card. `tools/screenshots.py` retakes the
+images in `docs/` against a running app (Playwright, fixed viewport, light theme).
+`REVIEWAUDIT_HOME` moves the data directory.
 
 ```
 src/reviewaudit/api.py        cached SerpApi calls, pagination, the empty-page retry

@@ -37,19 +37,20 @@ def api_from_env(hl="en"):
 
 def read_place(query, reviews=200, lookups=30, hl="en", out_dir=REPORTS, progress=None, api=None):
     """Runs the whole read. `progress(stage, done, total, note)` is called as it goes; returns the case summary dict."""
-    say = progress or (lambda *a: None)
+    say = progress or (lambda *a, **k: None)
     api = api or api_from_env(hl)
     out_dir = Path(out_dir)
 
     say("place", 0, 1, f"looking up {query}")
     place = api.place(query)
-    say("place", 1, 1, place.get("title") or place["data_id"])
+    say("place", 1, 1, place.get("title") or place["data_id"], place={k: place.get(k) for k in ("title", "thumbnail", "address", "rating")})
 
     pages = -(-reviews // 20)
     raw = api.reviews(place["data_id"], reviews, progress=lambda n: say("reviews", min(n, reviews), reviews, f"{min(n, reviews)} of {reviews} reviews"))
     if "title" not in place:  # started from a data_id: fetch the Maps entry now that the reviews told us the name
         place = api.place_card(place["data_id"], api.place_info.get("title", ""), api.place_info.get("address", "")) or place
     place = {**api.place_info, **{k: v for k, v in place.items() if v}}  # search hit fills what place_info lacks
+    say("reviews", 0, reviews, "", place={k: place.get(k) for k in ("title", "thumbnail", "address", "rating")})
     rs = [x for x in map(signals.parse, raw) if x]
     third_party = Counter(r.get("source", "?") for r in raw if r["user"].get("contributor_id") is None)
     say("reviews", reviews, reviews, f"{len(rs)} reviews read" + (f", {sum(third_party.values())} third-party left out" if third_party else ""))

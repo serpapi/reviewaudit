@@ -204,7 +204,7 @@ footer.end { margin: 80px auto 40px; color: var(--muted); font-size: 14px; displ
 .hero .where { margin-top: 6px; }
 .hero .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 14px; color: var(--muted); font-size: 13.5px; }
 .hero .meta b { color: var(--ink-2); font-weight: 500; }
-.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 24px; }
+.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 24px; align-items: start; }
 .card { grid-column: span 12; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px 22px; min-width: 0; scroll-margin-top: 16px; }
 .card.c3 { grid-column: span 3; } .card.c4 { grid-column: span 4; } .card.c5 { grid-column: span 5; } .card.c6 { grid-column: span 6; } .card.c7 { grid-column: span 7; } .card.c8 { grid-column: span 8; }
 .card:target { box-shadow: 0 0 0 2px var(--sus); }
