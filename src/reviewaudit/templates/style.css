@@ -340,3 +340,23 @@ td.n { text-align:right; white-space:nowrap; }
   .hero .map { display: none; }
   a { text-decoration: none; }
 }
+
+/* insights band */
+h2.band { font: 600 22px/1.2 var(--display); letter-spacing: -0.015em; margin: 44px 0 4px; }
+h2.band small { display: block; color: var(--muted); font: 400 14px var(--text); margin-top: 4px; }
+.card .lab { color: var(--muted); font-size: 13px; margin: 14px 0 6px; }
+.card .lab:first-of-type { margin-top: 0; }
+.cloud { margin: 0; line-height: 1.5; display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; }
+.cloud span { font-weight: 500; }
+.cloud.good span { color: var(--star); } .cloud.bad span { color: var(--attack); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.chips .chip b { font-weight: 600; color: var(--ink-2); margin-left: 3px; }
+.kv.small { font-size: 13.5px; margin-top: 14px; gap: 4px 14px; }
+.kv.small small { color: var(--muted); font-weight: 400; margin-left: 4px; }
+.hist { display: grid; grid-template-columns: repeat(24, 1fr); gap: 3px; height: 120px; align-items: end; margin-top: 6px; }
+.hist .col { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; }
+.hist i { display: flex; flex-direction: column; justify-content: flex-end; background: var(--star); border-radius: 3px 3px 0 0; min-height: 1px; }
+.hist i b { display: block; background: var(--sus); border-radius: 3px 3px 0 0; }
+.hist span { display: block; height: 16px; font-size: 11px; color: var(--muted); text-align: left; margin-top: 4px; }
+.bars.subs { grid-template-columns: max-content minmax(0, 1fr) 4ch 0; }
+.bars.subs .base { border-left-color: var(--sus); }

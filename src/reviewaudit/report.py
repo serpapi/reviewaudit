@@ -8,6 +8,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from . import norms as _norms
+from . import insights
 from .case import build
 from .signals import TELLS, TRUST
 
@@ -122,6 +123,7 @@ def render(place, reviews, result, api, third_party=None):
     )
     return tpl.render(
         og=og,
+        insights=insights.build(reviews, result["suspects"], checked, place),
         place=place,
         reviews=reviews,
         result=result,

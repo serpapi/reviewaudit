@@ -43,6 +43,10 @@ class Review:
     local_guide: bool
     photos: int
     link: str
+    text_en: str = ""  # Google's translation when the review is not in the requested language
+    details: dict = field(default_factory=dict)  # food/service/atmosphere, price_per_person, recommended_dishes…
+    likes: int = 0
+    response_at: datetime | None = None  # when the owner answered
     tells: dict = field(default_factory=dict)  # name -> detail
     trust: list = field(default_factory=list)
     history: dict | None = None
@@ -70,6 +74,10 @@ def parse(raw):
         local_guide=bool(u.get("local_guide")),
         photos=len(raw.get("images") or []),
         link=raw["link"],
+        text_en=(raw.get("extracted_snippet") or {}).get("translated") or raw.get("snippet") or "",
+        details=raw.get("details") or {},
+        likes=raw.get("likes") or 0,
+        response_at=datetime.fromisoformat(raw["response"]["iso_date"].replace("Z", "+00:00")) if raw.get("response", {}).get("iso_date") else None,
     )
 
 
@@ -236,6 +244,7 @@ def history_tells(reviews, histories, place_data_id, place_title):
             n=len(hist),
             ratings=Counter(int(x["rating"]) for x in hist if "rating" in x),
             places=[x["place_info"].get("title", "?") for x in others],
+            gps=[(x["place_info"]["gps_coordinates"]["latitude"], x["place_info"]["gps_coordinates"]["longitude"]) for x in others if x["place_info"].get("gps_coordinates")],
             contributions=h.get("contributor", {}).get("contributions", {}),
         )
         places_by_user[r.user_id] = {x["place_info"]["data_id"] for x in others if x["place_info"].get("data_id")}

@@ -49,6 +49,15 @@ every review on a timeline, what was ruled out, and the reviews taken out with l
 Google. One self-contained HTML file per place, light and dark, with Open Graph tags so a
 pasted link previews properly.
 
+Below the audit, the same reviews read as reviews: what people praise and what they
+complain about (words that lean five-star against one-star), Google's own review topics,
+sub-ratings for food, service and atmosphere (or rooms and location) with and without the
+reviews taken out, what people recommend ordering, the hour of day reviews are posted (a
+farm keeps office hours), the language mix and how far the reviewers' other reviews sit from
+here, where else they go, how fast the owner replies and to whom, and the reviews other
+people found most useful.
+
+<p align="center"><img src="docs/insights.png" alt="What the reviews say: praise and complaints, sub-ratings, posting hours, who reviews, the owner" width="880"></p>
 <p align="center"><img src="docs/cases.png" alt="The cases, most padded first" width="880"></p>
 
 ## How it reads a place

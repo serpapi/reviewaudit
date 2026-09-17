@@ -130,6 +130,9 @@
   </section>
   {% endif %}
 
+</div>
+{% include "insights.html" %}
+<div class="grid">
   <section class="card" id="taken">
     <details>
       <summary>The {{ result.suspects | length }} review{{ 's' if result.suspects | length != 1 }} taken out</summary>

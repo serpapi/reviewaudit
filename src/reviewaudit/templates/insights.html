@@ -1,0 +1,101 @@
+{% set I = insights %}
+<h2 class="band">What the reviews say<small>the place itself, beyond the audit</small></h2>
+<div class="grid">
+  <section class="card c7" id="words">
+    <h3>What people praise, and what they complain about</h3>
+    {% if I.words.praise %}
+    <p class="lab">Praise, in the words of the {{ I.words.n_good }} four- and five-star reviews</p>
+    <p class="cloud good">{% for w, n in I.words.praise %}<span style="font-size:{{ (13 + 14 * (n / I.words.praise[0][1])) | round(1) }}px" title="in {{ n }} reviews">{{ w }}</span>{% endfor %}</p>
+    {% endif %}
+    {% if I.words.complaints | length >= 3 %}
+    <p class="lab">Complaints, from the {{ I.words.n_bad }} one- and two-star{{ ' and three-star' if I.words.n_bad < 10 }} reviews</p>
+    <p class="cloud bad">{% for w, n in I.words.complaints %}<span style="font-size:{{ (13 + 14 * (n / I.words.complaints[0][1])) | round(1) }}px" title="in {{ n }} reviews">{{ w }}</span>{% endfor %}</p>
+    {% else %}<p class="why">Too few unhappy reviews in the last {{ reviews | length }} to say what goes wrong here.</p>{% endif %}
+    {% if place.topics %}<p class="lab">Google's own review topics</p><p class="chips">{% for t in place.topics[:12] %}<span class="chip trust">{{ t.keyword }} <b>{{ t.mentions }}</b></span>{% endfor %}</p>{% endif %}
+  </section>
+
+  <section class="card c5" id="subs">
+    <h3>{% if I.subs.rows %}Sub-ratings{% else %}What the reviews record{% endif %}</h3>
+    {% if I.subs.rows %}
+    <div class="bars subs">
+      {% for r in I.subs.rows %}
+      <span class="lab">{{ r.key }}</span>
+      <span class="track" title="{{ '%.2f' | format(r.mean) }} from {{ r.n }} reviews{% if r.kept and (r.kept - r.mean) | abs >= 0.05 %}, {{ '%.2f' | format(r.kept) }} without the reviews taken out{% endif %}"><span class="fill" style="width:{{ '%.1f' | format(r.mean / 5 * 100) }}%"></span>{% if r.kept and (r.kept - r.mean) | abs >= 0.05 %}<span class="base" style="left:{{ '%.1f' | format(r.kept / 5 * 100) }}%"></span>{% endif %}</span>
+      <span class="val">{{ '%.1f' | format(r.mean) }}</span>
+      <span class="n"></span>
+      {% endfor %}
+    </div>
+    {% if I.subs.moves %}<div class="legend"><span><i class="base"></i>without the reviews taken out, where it moves</span></div>{% endif %}
+    {% endif %}
+    {% if I.subs.facts %}<div class="kv small">{% for k, (v, n) in I.subs.facts.items() %}<span>{{ k }}</span><b>{{ v }} <small>{{ n }} say so</small></b>{% endfor %}</div>{% endif %}
+    {% if I.subs.dishes %}<p class="lab">What people recommend ordering</p><p class="chips">{% for d, n in I.subs.dishes %}<span class="chip trust">{{ d }}{% if n > 1 %} <b>{{ n }}</b>{% endif %}</span>{% endfor %}</p>{% endif %}
+    {% if not I.subs.rows and not I.subs.facts and not I.subs.dishes %}<p class="why">Google asks for sub-ratings only in some categories; none here.</p>{% endif %}
+  </section>
+
+  <section class="card c7" id="hours">
+    <h3>When people post, by hour of the day{% if I.hours.offset %} (about UTC{{ '%+d' | format(I.hours.offset) }}){% endif %}</h3>
+    <div class="hist">
+      {% set top = I.hours.hours | map(attribute='n') | max %}
+      {% for h in I.hours.hours %}<div class="col" title="{{ '%02d' | format(h.h) }}:00, {{ h.n }} review{{ 's' if h.n != 1 }}{% if h.sus %}, {{ h.sus }} taken out{% endif %}"><i style="height:{{ (h.n / top * 100) if top else 0 }}%"><b style="height:{{ (h.sus / h.n * 100) if h.n else 0 }}%"></b></i><span>{{ h.h if h.h % 6 == 0 else '' }}</span></div>{% endfor %}
+    </div>
+    <p class="why">Most reviews land around {{ '%02d' | format(I.hours.peak) }}:00. {{ I.hours.night }} of {{ I.hours.total }} were posted between 01:00 and 07:00{% if I.hours.night / I.hours.total > 0.15 %}: a lot, for a place that is closed then{% endif %}. Violet is what was taken out; a farm keeps office hours, customers post after the visit.</p>
+  </section>
+
+  <section class="card c5" id="who">
+    <h3>Who reviews it</h3>
+    <div class="bars">
+      {% for lang, n in I.who.langs %}
+      <span class="lab">{{ lang }}</span>
+      <span class="track"><span class="fill" style="width:{{ '%.1f' | format(n / I.who.with_text * 100) }}%"></span></span>
+      <span class="val">{{ (n / I.who.with_text * 100) | round | int }}%</span>
+      <span class="n">{{ n }}</span>
+      {% endfor %}
+    </div>
+    <p class="why">Of the {{ I.who.with_text }} reviews with text. {{ I.who.guides }} of the {{ reviews | length }} reviewers are Local Guides.{% if I.who.far + I.who.near >= 6 %} Of the {{ I.who.far + I.who.near }} records pulled with places on them, {{ I.who.far }} review mostly more than 300 km from here: {{ 'visitors, mostly' if I.who.far > I.who.near * 1.5 else ('locals, mostly' if I.who.near > I.who.far * 1.5 else 'a mix of locals and visitors') }}.{% endif %}</p>
+  </section>
+
+  {% if I.elsewhere %}
+  <section class="card {{ 'c6' if I.owner else '' }}" id="elsewhere">
+    <h3>Where else these reviewers go</h3>
+    <div class="bars">
+      {% for t, n in I.elsewhere %}
+      <span class="lab" title="{{ t }}">{{ t | truncate(34) }}</span>
+      <span class="track"><span class="fill" style="width:{{ '%.1f' | format(n / I.elsewhere[0][1] * 100) }}%"></span></span>
+      <span class="val">{{ n }}</span>
+      <span class="n"></span>
+      {% endfor %}
+    </div>
+    <p class="why">Among the {{ checked | length }} reviewer records pulled: the other places two or more of them have also reviewed.</p>
+  </section>
+  {% endif %}
+
+  {% if I.owner %}
+  <section class="card {{ 'c6' if I.elsewhere else '' }}" id="owner">
+    <h3>The owner</h3>
+    <div class="ratings">
+      <div><b class="num">{{ (I.owner.rate * 100) | round | int }}%</b><span>of reviews get a reply</span></div>
+      <div><b class="num">{% if I.owner.median_h < 1 %}{{ (I.owner.median_h * 60) | round | int }} min{% elif I.owner.median_h < 48 %}{{ I.owner.median_h | round | int }} h{% else %}{{ (I.owner.median_h / 24) | round | int }} d{% endif %}</b><span>typical time to reply</span></div>
+    </div>
+    <div class="bars" style="margin-top:16px">
+      {% for s, share in I.owner.by_star.items() %}
+      <span class="stars">{{ '★' * s }}<i>{{ '★' * (5 - s) }}</i></span>
+      <span class="track"><span class="fill" style="width:{{ '%.1f' | format(share * 100) }}%"></span></span>
+      <span class="val">{{ (share * 100) | round | int }}%</span>
+      <span class="n">replied</span>
+      {% endfor %}
+    </div>
+    <p class="why">{% if I.owner.rate >= 0.8 %}A reply to nearly everything, that fast, is a managed page: someone is paid to watch it.{% elif I.owner.rate >= 0.3 %}Replies to some, not all.{% else %}The owner rarely answers.{% endif %}</p>
+  </section>
+  {% endif %}
+
+  {% if I.useful.up or I.useful.down %}
+  <section class="card" id="useful">
+    <h3>The reviews other people found most useful</h3>
+    <div class="echo">
+      {% for r in (I.useful.up, I.useful.down) if r %}
+      <blockquote>{{ r.text_en or r.text }}<footer><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.user_name }}</a> · {{ '★' * r.rating }} · {{ r.date | day }} · {{ r.likes }} found this useful</footer></blockquote>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>

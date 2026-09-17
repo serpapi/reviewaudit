@@ -56,5 +56,9 @@ with sync_playwright() as p:
     page.goto(f"{base}/nusr-et-steakhouse-besiktas-istanbul.html")
     settle(page, 3500)
     page.screenshot(path=f"{out}/report.png", full_page=True, clip={"x": 0, "y": 0, "width": 1280, "height": 1280})
+    # a place with enough unhappy reviews to have a complaints list
+    page.goto(f"{base}/ciya-sofrasi-kadikoy-istanbul.html")
+    settle(page, 3000)
+    page.locator("h2.band ~ .grid").first.screenshot(path=f"{out}/insights.png")
     browser.close()
 print("docs/{home,search,cases,run,report}.png")
