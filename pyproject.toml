@@ -5,7 +5,10 @@ description = "Is this 4.8 real? Reads a Google Maps place's reviews for the tel
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "Cagdas Salur", email = "cagdassalur@gmail.com" }
+    { name = "SerpApi", email = "contact@serpapi.com" },
+]
+maintainers = [
+    { name = "Cagdas Salur", email = "cagdas@serpapi.com" },
 ]
 requires-python = ">=3.12"
 keywords = ["serpapi", "google-maps", "reviews", "fake-reviews", "review-fraud"]
@@ -27,8 +30,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/zcag/reviewaudit"
-Source = "https://github.com/zcag/reviewaudit"
+Homepage = "https://serpapi.com"
+Source = "https://github.com/serpapi/reviewaudit"
+Issues = "https://github.com/serpapi/reviewaudit/issues"
 
 [project.scripts]
 reviewaudit = "reviewaudit:main"

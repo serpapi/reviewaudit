@@ -7,7 +7,7 @@
 Reads a Google Maps place's reviews and tells you how much of the praise its own reviewers can explain.</p>
 
 <p align="center">
-  <a href="https://github.com/zcag/reviewaudit/actions/workflows/test.yml"><img src="https://github.com/zcag/reviewaudit/actions/workflows/test.yml/badge.svg" alt="tests"></a>
+  <a href="https://github.com/serpapi/reviewaudit/actions/workflows/test.yml"><img src="https://github.com/serpapi/reviewaudit/actions/workflows/test.yml/badge.svg" alt="tests"></a>
   <img src="https://img.shields.io/badge/python-3.12%2B-blue" alt="Python 3.12+">
   <img src="https://img.shields.io/badge/license-MIT-black" alt="MIT">
   <a href="https://serpapi.com"><img src="https://img.shields.io/badge/data-SerpApi-6b46d9" alt="SerpApi"></a>
@@ -37,7 +37,7 @@ It runs on your machine with your own SerpApi key. A place costs about 42 credit
 minutes. The free plan's 250 searches a month read five places.
 
 ```sh
-uv tool install git+https://github.com/zcag/reviewaudit
+uv tool install git+https://github.com/serpapi/reviewaudit
 reviewaudit serve
 ```
 
@@ -170,7 +170,7 @@ closer.
 ## Development
 
 ```sh
-git clone https://github.com/zcag/reviewaudit && cd reviewaudit
+git clone https://github.com/serpapi/reviewaudit && cd reviewaudit
 uv sync
 uv run pytest                      # the tells on synthetic data, the app's routes
 uv run reviewaudit serve --reload  # the app, restarting when the code changes
