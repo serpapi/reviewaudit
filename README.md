@@ -13,7 +13,7 @@ Reads a Google Maps place's reviews and tells you how much of the praise its own
   <a href="https://serpapi.com"><img src="https://img.shields.io/badge/data-SerpApi-6b46d9" alt="SerpApi"></a>
 </p>
 
-<p align="center"><img src="docs/report.png" alt="A case: Nusr-Et Steakhouse, padded" width="900"></p>
+<p align="center"><img src="docs/report.png" alt="A case: a Bosphorus dinner cruise, manufactured" width="900"></p>
 
 Every business with a rating has an incentive to improve it, and a market that will sell it
 one. reviewaudit reads the newest reviews of one place through [SerpApi](https://serpapi.com),
@@ -21,11 +21,17 @@ pulls the full Google record of the reviewers worth a closer look, and writes a 
 that says which reviews the place's own baseline cannot explain, what the rating is without
 them, and what kind of padding it is: bought, or asked for at the table.
 
-The page above is a real read. A towing service in Atlanta with a **5.0 from 286 reviews**:
-198 of the last 200 reviews are five stars, **none** are four stars, 29% come from accounts
-that have never reviewed anything else (8% is typical), 3% carry a photo (14% is typical),
-and three separate weeks brought 24, 13 and 17 five-star reviews where four is this place's
-normal week.
+The page above is a real read: a Bosphorus dinner cruise advertising **4.7 from 1,057
+reviews**. 73 of its last 180 five-star reviews are more than its own reviewers can explain,
+which takes the recent rating from 4.8 to **4.6**, and to 4.5 among the reviewers whose
+record can be checked. A third of the reviewers have never reviewed anything else (9% is
+typical here), they give five stars 23 percentage points more often than accounts with a
+record, five-star reviews arrive in batches minutes apart eight times more often than the
+hours people post at would predict, and two separate weeks brought 35 five-star reviews
+where six is this place's normal week.
+
+Every one of those claims is on the page with the chart or table it came from, and every
+review taken out is listed with a link back to Google.
 
 It runs on your machine with your own SerpApi key. A place costs about 42 credits and two
 minutes. The free plan's 250 searches a month read five places.

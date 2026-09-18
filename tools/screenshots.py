@@ -17,7 +17,7 @@ from playwright.sync_api import sync_playwright
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8811"
 ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None  # e.g. home,cases: a run costs credits, skip it when you can
 OUT = "docs"
-CASE = "westside-atlanta-towing-atlanta.html"  # the hero: a 5.0 that does not hold up
+CASE = "private-bosphorus-dinner-cruise-istanbul-luxury-yacht-charter-beyoglu-istanbul.html"  # the hero: the clearest case of bought reviews
 INSIGHTS = "katz-s-delicatessen-new-york.html"  # a place with enough unhappy reviews to have complaints
 SEARCH = "/search?q=towing&near=Atlanta,%20Georgia"
 RUN = "Pike Place Chowder Seattle"  # somewhere not yet read, so the run has work to do
