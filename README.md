@@ -156,9 +156,10 @@ closer.
 
 ## Notes for SerpApi users
 
-- `google_maps_reviews` pages asked for with `next_page_token` and `num=20` sometimes come
-  back empty with `Success`, and SerpApi caches that answer for an hour. `api.py` retries
-  with `no_cache=true`, then falls back to `num=10`.
+- `google_maps_reviews` sometimes answers a `next_page_token` request with no reviews and
+  `status: "Success"`, for a place whose previous page was full. Because the status is a
+  success the empty answer is cached for the hour, so a plain retry keeps returning it;
+  `no_cache=true` on the same parameters returns the page. `api.py` retries that way.
 - The contributor engine returns relative dates only ("a week ago"); the reviews engine has
   `iso_date`. So the timing tells run on the place's reviews, and the contributor record is
   used for *what* an account has reviewed, not when.

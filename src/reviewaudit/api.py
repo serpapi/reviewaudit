@@ -60,10 +60,10 @@ class Api:
             if token:
                 params.update(next_page_token=token, num=20)
             data = self.search(**params)
-            if token and not data.get("reviews"):  # num=20 pages come back empty now and then, and SerpApi caches the empty answer
+            if token and not data.get("reviews"):  # an empty page comes back as Success and is cached for the hour
                 data = self.search(**params, no_cache=True)
-            if token and not data.get("reviews"):
-                data = self.search(**{**params, "num": 10}, no_cache=True)
+            if token and not data.get("reviews"):  # a second fresh request usually lands on a proxy that answers
+                data = self.search(**params, no_cache=True)
             if not out:
                 self.place_info = data.get("place_info", {})
             out += data.get("reviews", [])
