@@ -335,7 +335,7 @@ def verdict(reviews, suspects):
     padded = sum(r.rating == 5 for r in suspects) / len(fives) if fives else 0
     ones = [r for r in reviews if r.rating == 1]
     attacked = sum(r.rating == 1 for r in suspects) / len(ones) if ones else 0
-    tier = ("looks genuine", "lightly padded", "padded", "manufactured")[sum(padded >= t for t in (0.05, 0.15, 0.35))]
+    tier = ("looks genuine", "looks lightly padded", "looks padded", "looks manufactured")[sum(padded >= t for t in (0.05, 0.15, 0.35))]
     return dict(padded=padded, attacked=attacked, tier=tier)
 
 

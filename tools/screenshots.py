@@ -1,6 +1,6 @@
 """The README images, taken against a running app so they are never hand-cropped.
 
-    uv run reviewaudit serve --no-open &
+    uv run python tools/demo.py &          # an invented Google Maps: no real place or reviewer in the images
     uv run python tools/screenshots.py [http://localhost:8811]
 
 Every shot is clipped to real element boundaries, so nothing is ever cut through the middle
@@ -15,12 +15,12 @@ import urllib.request
 from playwright.sync_api import sync_playwright
 
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8811"
-ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None  # e.g. home,cases: a run costs credits, skip it when you can
+ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None  # e.g. home,cases
 OUT = "docs"
-CASE = "private-bosphorus-dinner-cruise-istanbul-luxury-yacht-charter-beyoglu-istanbul.html"  # the hero: the clearest case of bought reviews
-INSIGHTS = "katz-s-delicatessen-new-york.html"  # a place with enough unhappy reviews to have complaints
-SEARCH = "/search?q=towing&near=Atlanta,%20Georgia"
-RUN = "Pike Place Chowder Seattle"  # somewhere not yet read, so the run has work to do
+CASE = "harbor-lights-dinner-cruise-port-arden.html"  # the hero: the clearest case of bought reviews
+INSIGHTS = "anchor-street-deli-port-arden.html"  # a place with enough unhappy reviews to have complaints
+SEARCH = "/search?q=pizza&near=Port%20Arden"
+RUN = "Driftwood Pizza Co."  # somewhere not yet read, so the run has work to do
 WIDTH, SCALE = 1280, 2
 
 
@@ -83,7 +83,7 @@ with sync_playwright() as p:
         settle(page)
         shot(page, "cases.png", through="table.docket tr:nth-child(9)")
 
-    # a run, caught while it pulls records: this one spends credits, so it is skipped unless asked for
+    # a run, caught while it pulls records
     if want("run"):
       req = urllib.request.Request(f"{BASE}/runs", data=urllib.parse.urlencode(dict(q=RUN, title=RUN)).encode(), method="POST")
       req.add_header("Content-Type", "application/x-www-form-urlencoded")

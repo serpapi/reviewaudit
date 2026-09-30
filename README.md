@@ -13,7 +13,7 @@ Reads a Google Maps place's reviews and tells you how much of the praise its own
   <a href="https://serpapi.com"><img src="https://img.shields.io/badge/data-SerpApi-6b46d9" alt="SerpApi"></a>
 </p>
 
-<p align="center"><img src="docs/report.png" alt="A case: a Bosphorus dinner cruise, manufactured" width="900"></p>
+<p align="center"><img src="docs/report.png" alt="A case: an invented dinner cruise that looks manufactured" width="900"></p>
 
 Every business with a rating has an incentive to improve it, and a market that will sell it
 one. reviewaudit reads the newest reviews of one place through [SerpApi](https://serpapi.com),
@@ -21,14 +21,17 @@ pulls the full Google record of the reviewers worth a closer look, and writes a 
 that says which reviews the place's own baseline cannot explain, what the rating is without
 them, and what kind of padding it is: bought, or asked for at the table.
 
-The page above is a real read: a Bosphorus dinner cruise advertising **4.7 from 1,057
-reviews**. 73 of its last 180 five-star reviews are more than its own reviewers can explain,
-which takes the recent rating from 4.8 to **4.6**, and to 4.5 among the reviewers whose
-record can be checked. A third of the reviewers have never reviewed anything else (9% is
-typical here), they give five stars 23 percentage points more often than accounts with a
-record, five-star reviews arrive in batches minutes apart eight times more often than the
-hours people post at would predict, and two separate weeks brought 35 five-star reviews
-where six is this place's normal week.
+**It reports patterns worth investigating, not findings.** Every number is a statistic over
+public reviews, set against the place's own reviewers and the other places read. It says where
+a place's reviews behave unusually and how much of its rating that pattern accounts for. It
+does not establish that any particular review is fake, or who wrote it; that is why every
+verdict reads "looks".
+
+The page above is Harbor Lights Dinner Cruise, which does not exist. Every place, review and
+reviewer in these images is invented by `tools/demo.py`, with the padding written in: first-time
+accounts that give five stars far more often than reviewers with a record, and two weeks that
+each brought over 30 five-star reviews where a normal week brings four. Taken out, they move
+the recent rating from 4.3 to 3.9.
 
 Every one of those claims is on the page with the chart or table it came from, and every
 review taken out is listed with a link back to Google.
@@ -82,7 +85,7 @@ go, how fast the owner replies and to whom, and the reviews other people found m
 
 <p align="center"><img src="docs/insights.png" alt="What the reviews say: praise and complaints, sub-ratings, posting hours, who reviews, the owner" width="900"></p>
 
-<p align="center"><i>Katz's Delicatessen, New York: genuine, and the reviews still have plenty to say.</i></p>
+<p align="center"><i>Anchor Street Deli, invented too: the same reviews, read as reviews.</i></p>
 
 Each case is one self-contained HTML file, light and dark, with Open Graph tags so a pasted
 link previews properly, and a print stylesheet.
@@ -115,7 +118,7 @@ From the terminal, the same read:
 
 ```sh
 export SERPAPI_KEY=…
-reviewaudit "Westside Atlanta Towing"
+reviewaudit "<place name> <city>"
 reviewaudit 0x88f505b69e94a0bf:0x847b2884185db12 --reviews 400 --lookups 50
 reviewaudit --norms       # rebuild the baseline and the case index from your own cases
 ```
@@ -189,8 +192,9 @@ src/reviewaudit/templates/    the case page, the app pages, one stylesheet
 ```
 
 `tools/overflow.js`, pasted into the console on the cases page, loads every case at five
-widths and lists anything that leaks out of its card. `tools/screenshots.py` retakes the
-images in `docs/` against a running app.
+widths and lists anything that leaks out of its card. `tools/demo.py` serves the app over an
+invented Google Maps, and `tools/screenshots.py` retakes the images in `docs/` against it, so
+no real place or reviewer ever appears in them.
 
 Issues and pull requests are welcome, especially new tells with a rationale, and stop-word
 lists or staff-name patterns for languages beyond English and Turkish.
@@ -198,4 +202,5 @@ lists or staff-name patterns for languages beyond English and Turkish.
 ## License
 
 MIT. Review data belongs to Google and its reviewers; this reads it through SerpApi under
-their terms.
+their terms. How you use what it finds, and whether you publish it, is yours to judge: nothing
+here suggests that every use of Google Maps review data is free of legal risk.
