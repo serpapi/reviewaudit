@@ -14,7 +14,8 @@ whom why will with would you your yours yourself yourselves place really also ge
 still back go went come came us they're it's i'm don't didn't can't you're we're there's ive im dont didnt cant wasnt isnt arent restaurant food
 service staff time visit visited experience recommend recommended definitely highly overall everything something anything nothing bit little
 around always never ever thing things day night people someone everyone amazing best don didn doesn isn wasn won couldn wouldn
-shouldn aren weren hasn haven""".split())
+shouldn aren weren hasn haven like made make right enough every actually way whole without felt took kept left said told asked
+want wanted sure pretty though two three first last next""".split())
 
 
 def _words(text):
@@ -86,15 +87,15 @@ def _script(text):
 
 def _latin_language(text):
     t = text.lower()
-    if re.search(r"[ğışçö]", t) or re.search(r"\b(ve|çok|bir|için|güzel|ama|ile)\b", t):
+    if re.search(r"[ğışçö]", t) or re.search(r"(?<!['’])\b(ve|çok|bir|için|güzel|ama|ile)\b", t):
         return "Turkish"
     if re.search(r"[ßäöü]", t) or re.search(r"\b(und|sehr|nicht|aber|ist|das)\b", t):
         return "German"
-    if re.search(r"\b(the|and|was|very|with|were)\b", t):
+    if re.search(r"\b(the|and|was|very|with|were|is|it|my|for|but|this|great|good|best|they|you|our|not|of|to|an|at|be|are|will|would|just|every|back|worth|really|nice|love|loved|amazing|finally)\b", t):
         return "English"
     if re.search(r"\b(muy|pero|con|para|bueno|una)\b", t) or "ñ" in t:
         return "Spanish"
-    if re.search(r"\b(très|mais|avec|pour|nous|est)\b", t):
+    if re.search(r"\b(très|mais|avec|pour|nous|est|et|les|des|on)\b", t):
         return "French"
     if re.search(r"\b(molto|anche|con|per|una|buono)\b", t):
         return "Italian"

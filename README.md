@@ -27,11 +27,11 @@ a place's reviews behave unusually and how much of its rating that pattern accou
 does not establish that any particular review is fake, or who wrote it; that is why every
 verdict reads "looks".
 
-The page above is Harbor Lights Dinner Cruise, which does not exist. Every place, review and
-reviewer in these images is invented by `tools/demo.py`, with the padding written in: first-time
-accounts that give five stars far more often than reviewers with a record, and two weeks that
-each brought over 30 five-star reviews where a normal week brings four. Taken out, they move
-the recent rating from 4.3 to 3.9.
+The page above is Gull Rock Dinner Cruise, which does not exist. The map and the streets are
+Portland, Maine, but every place, review and reviewer in these images is invented by
+`tools/demo.py`, with the padding written in: first-time accounts that give five stars far more
+often than reviewers with a record, and two weeks that each brought 34 five-star reviews where a
+normal week brings three. Taken out, they move the recent rating from 4.2 to 3.9.
 
 Every one of those claims is on the page with the chart or table it came from, and every
 review taken out is listed with a link back to Google.
@@ -85,7 +85,7 @@ go, how fast the owner replies and to whom, and the reviews other people found m
 
 <p align="center"><img src="docs/insights.png" alt="What the reviews say: praise and complaints, sub-ratings, posting hours, who reviews, the owner" width="900"></p>
 
-<p align="center"><i>Anchor Street Deli, invented too: the same reviews, read as reviews.</i></p>
+<p align="center"><i>Old Mill Steakhouse, invented too: the same reviews, read as reviews.</i></p>
 
 Each case is one self-contained HTML file, light and dark, with Open Graph tags so a pasted
 link previews properly, and a print stylesheet.
@@ -193,7 +193,7 @@ src/reviewaudit/templates/    the case page, the app pages, one stylesheet
 
 `tools/overflow.js`, pasted into the console on the cases page, loads every case at five
 widths and lists anything that leaks out of its card. `tools/demo.py` serves the app over an
-invented Google Maps, and `tools/screenshots.py` retakes the images in `docs/` against it, so
+invented Google Maps (businesses that do not exist, on real Portland streets), and `tools/screenshots.py` retakes the images in `docs/` against it, so
 no real place or reviewer ever appears in them.
 
 Issues and pull requests are welcome, especially new tells with a rationale, and stop-word

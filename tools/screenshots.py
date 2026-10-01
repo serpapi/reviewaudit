@@ -17,9 +17,9 @@ from playwright.sync_api import sync_playwright
 BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8811"
 ONLY = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else None  # e.g. home,cases
 OUT = "docs"
-CASE = "harbor-lights-dinner-cruise-port-arden.html"  # the hero: the clearest case of bought reviews
-INSIGHTS = "anchor-street-deli-port-arden.html"  # a place with enough unhappy reviews to have complaints
-SEARCH = "/search?q=pizza&near=Port%20Arden"
+CASE = "gull-rock-dinner-cruise-portland.html"  # the hero: the clearest case of bought reviews
+INSIGHTS = "old-mill-steakhouse-portland.html"  # a busy restaurant: sub-ratings, dishes, visitors and complaints
+SEARCH = "/search?q=pizza&near=Portland%2C%20ME"
 RUN = "Driftwood Pizza Co."  # somewhere not yet read, so the run has work to do
 WIDTH, SCALE = 1280, 2
 
