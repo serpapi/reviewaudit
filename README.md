@@ -1,6 +1,6 @@
 <h1 align="center">
   <img src="docs/icon.png" width="76" alt=""><br>
-  reviewaudit
+  Review Audit
 </h1>
 
 <p align="center"><b>Is this 4.8 real?</b><br>
@@ -16,7 +16,7 @@ Reads a Google Maps place's reviews and tells you how much of the praise its own
 <p align="center"><img src="docs/report.png" alt="A case: an invented dinner cruise that looks manufactured" width="900"></p>
 
 Every business with a rating has an incentive to improve it, and a market that will sell it
-one. reviewaudit reads the newest reviews of one place through [SerpApi](https://serpapi.com),
+one. Review Audit reads the newest reviews of one place through [SerpApi](https://serpapi.com),
 pulls the full Google record of the reviewers worth a closer look, and writes a single page
 that says which reviews the place's own baseline cannot explain, what the rating is without
 them, and what kind of padding it is: bought, or asked for at the table.
